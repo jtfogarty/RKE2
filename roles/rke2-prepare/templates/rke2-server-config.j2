@@ -1,0 +1,28 @@
+write-kubeconfig-mode: "0644"
+token: {{ rke2_token }}  # Use the dynamic token instead of a static one
+
+{% if inventory_hostname == groups['server_nodes'][0] %}
+bind-address: {{ ansible_default_ipv4.address }}
+advertise-address: {{ ansible_default_ipv4.address }}
+{% else %}
+server: https://{{ vip }}:6443
+{% endif %}
+
+tls-san:
+  - {{ vip }}
+  - my-kubernetes-domain.com
+  - {{ hostvars[groups['server_nodes'][0]]['ansible_host'] }}
+  - {{ hostvars[groups['server_nodes'][1]]['ansible_host'] }}
+  - {{ hostvars[groups['server_nodes'][2]]['ansible_host'] }}
+  - {{ ansible_fqdn }}
+  - {{ ansible_default_ipv4.address }}
+
+node-label:
+  - "server=true"
+
+disable:
+  - rke2-ingress-nginx
+
+# Custom CIDR settings
+cluster-cidr: "{{ cluster_cidr }}"
+service-cidr: "{{ service_cidr }}"

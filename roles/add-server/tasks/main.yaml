@@ -1,0 +1,40 @@
+# Copy server config with token to all servers
+- name: Deploy RKE2 server Configuration
+  ansible.builtin.template:
+    src: templates/rke2-server-config.j2
+    dest: /etc/rancher/rke2/config.yaml
+    owner: root
+    group: root
+    mode: '0644'
+
+# Keep checking the cluster API until it's functioning (deployed)
+- name: Wait for cluster API to be ready (can take 5-10 mins depending on internet/hardware)
+  ansible.builtin.command:
+    cmd: "kubectl get nodes"
+  register: kubectl_output
+  until: "'connection refused' not in kubectl_output.stderr"
+  retries: 120
+  delay: 10
+  changed_when: true
+  become_user: "{{ ansible_user }}"
+  when: inventory_hostname == groups['server_nodes'][0]
+
+# Ensure all RKE2 servers are enabled and running
+- name: Ensure RKE2 server is enabled and running on all server nodes
+  ansible.builtin.systemd:
+    name: rke2-server
+    enabled: true
+    state: restarted
+    daemon_reload: true
+
+- name: Wait for RKE2 server to be ready on all server nodes
+  ansible.builtin.wait_for:
+    path: /var/lib/rancher/rke2/server/node-token
+    state: present
+    timeout: 300
+
+- name: Verify RKE2 server is running on all server nodes
+  ansible.builtin.command: systemctl is-active rke2-server
+  register: rke2_server_status
+  changed_when: false
+  failed_when: rke2_server_status.rc != 0

@@ -1,0 +1,34 @@
+# Create a directory to download RKE2 binary to
+- name: Create directory for RKE2 binary
+  ansible.builtin.file:
+    path: "{{ rke2_install_dir }}"
+    state: directory
+    mode: '0755'
+
+# Remove old RKE2 binary
+- name: Remove old RKE2 binary
+  ansible.builtin.file:
+    path: "{{ rke2_install_dir }}/rke2"
+    state: absent
+
+# Download the RKE2 binary with version-specific name
+- name: Download RKE2 binary
+  ansible.builtin.get_url:
+    url: "{{ rke2_binary_url }}"
+    dest: "{{ rke2_install_dir }}/rke2-{{ rke2_version }}"
+    mode: '0755'
+
+# Create a symlink to the version-specific binary
+- name: Create symlink to RKE2 binary
+  ansible.builtin.file:
+    src: "{{ rke2_install_dir }}/rke2-{{ rke2_version }}"
+    dest: "{{ rke2_install_dir }}/rke2"
+    state: link
+    force: yes
+
+# Set permissions on the RKE2 binary (this might be redundant, but keeping for consistency)
+- name: Set executable permissions on the RKE2 binary
+  ansible.builtin.file:
+    path: "{{ rke2_install_dir }}/rke2-{{ rke2_version }}"
+    mode: '0755'
+    state: file

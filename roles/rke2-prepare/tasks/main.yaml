@@ -13,7 +13,7 @@
     mode: '0755'
 
 # Start and enable RKE2 server on the first node
-- name: Ensure RKE2 server is enabled and running
+- name: Ensure RKE2 server is enabled and running on first node
   ansible.builtin.systemd:
     name: rke2-server
     enabled: true
@@ -22,7 +22,7 @@
   when: inventory_hostname == groups['server_nodes'][0]
 
 # Wait for and fetch the token
-- name: Wait for node-token
+- name: Wait for node-token on first node
   ansible.builtin.wait_for:
     path: /var/lib/rancher/rke2/server/node-token
   when: inventory_hostname == groups['server_nodes'][0]
@@ -33,21 +33,9 @@
   register: rke2_token
   when: inventory_hostname == groups['server_nodes'][0]
 
-# Debug tasks for token
-- name: Wait for node-token
-  ansible.builtin.wait_for:
-    path: /var/lib/rancher/rke2/server/node-token
-  when: inventory_hostname == groups['server_nodes'][0]
-
-- name: Fetch the token from the first server node
-  ansible.builtin.slurp:
-    src: /var/lib/rancher/rke2/server/node-token
-  register: rke2_token_file
-  when: inventory_hostname == groups['server_nodes'][0]
-
 - name: Set token fact for first server
   ansible.builtin.set_fact:
-    rke2_token: "{{ rke2_token_file['content'] | b64decode | trim }}"
+    rke2_token: "{{ rke2_token['content'] | b64decode | trim }}"
   when: inventory_hostname == groups['server_nodes'][0]
 
 - name: Distribute RKE2 token to all nodes
@@ -60,6 +48,31 @@
     dest: "/var/lib/rancher/rke2/server/node-token"
     mode: '0600'
   when: inventory_hostname in groups['server_nodes']
+
+# Configure and start RKE2 on nodes 2 and 3
+- name: Deploy RKE2 server Configuration on nodes 2 and 3
+  ansible.builtin.template:
+    src: templates/rke2-server-config.j2
+    dest: /etc/rancher/rke2/config.yaml
+    owner: root
+    group: root
+    mode: '0644'
+  when: inventory_hostname in [groups['server_nodes'][1], groups['server_nodes'][2]]
+
+- name: Ensure RKE2 server is enabled and running on nodes 2 and 3
+  ansible.builtin.systemd:
+    name: rke2-server
+    enabled: true
+    state: started
+    daemon_reload: true
+  when: inventory_hostname in [groups['server_nodes'][1], groups['server_nodes'][2]]
+
+- name: Wait for RKE2 server to be ready on nodes 2 and 3
+  ansible.builtin.wait_for:
+    path: /var/lib/rancher/rke2/server/node-token
+    state: present
+    timeout: 300
+  when: inventory_hostname in [groups['server_nodes'][1], groups['server_nodes'][2]]
 
 # Deploy configurations and service files
 - name: Deploy RKE2 server Configuration

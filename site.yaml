@@ -1,0 +1,111 @@
+# bootstraps first server and copies configs for others/agents
+---
+- name: Prepare all nodes
+  hosts: all
+  roles:
+    - prepare-nodes
+    - rke2-download
+
+- name: Set up all server nodes
+  hosts: server_nodes
+  roles:
+    - role: rke2-prepare
+  vars:
+    is_first_server: "{{ inventory_hostname == groups['server_nodes'][0] }}"
+
+- name: Configure all server nodes
+  hosts: server_nodes
+  roles:
+    - role: add-server
+
+- name: Debug - Check token on all server nodes
+  hosts: server_nodes
+  tasks:
+    - name: Debug - Display token
+      ansible.builtin.debug:
+        var: rke2_token
+        verbosity: 2
+
+    - name: Debug - Check token file
+      ansible.builtin.stat:
+        path: /var/lib/rancher/rke2/server/node-token
+      register: token_file
+
+    - name: Debug - Display token file status
+      ansible.builtin.debug:
+        var: token_file
+        verbosity: 2
+
+- name: Configure RKE2 agent nodes
+  hosts: agent_nodes
+  roles:
+    - add-agent
+
+- name: Install kubernetes Python library
+  hosts: server_nodes
+  become: true
+  tasks:
+    - name: Ensure pip is installed
+      ansible.builtin.apt:
+        name: python3-pip
+        state: present
+
+    - name: Install kubernetes Python library
+      ansible.builtin.pip:
+        name: kubernetes
+        state: present
+
+#- name: Apply kube-vip (skip if using pfSense VIP)
+#  hosts: server_nodes
+#  roles:
+#    - kube-vip
+
+- name: Apply MetalLB manifests
+  hosts: server_nodes
+  roles:
+    - apply-manifests
+
+- name: Deploy Rancher
+  hosts: server_nodes
+  tasks:
+    - name: Create namespace for Rancher
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: cattle-system
+
+    - name: Install cert-manager CRDs
+      kubernetes.core.k8s:
+        state: present
+        src: https://github.com/jetstack/cert-manager/releases/download/v1.6.1/cert-manager.crds.yaml
+
+    - name: Create cert-manager namespace
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: cert-manager
+
+    - name: Deploy cert-manager
+      kubernetes.core.helm:
+        name: cert-manager
+        chart_ref: jetstack/cert-manager
+        release_namespace: cert-manager
+        create_namespace: true
+        values:
+          installCRDs: true
+
+    - name: Deploy Rancher
+      kubernetes.core.helm:
+        name: rancher
+        chart_ref: rancher-latest/rancher
+        release_namespace: cattle-system
+        create_namespace: true
+        values:
+          hostname: rancher.yourdomain.com
+          replicas: 3

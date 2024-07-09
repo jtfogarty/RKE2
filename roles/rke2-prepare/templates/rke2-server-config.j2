@@ -21,8 +21,8 @@ tls-san:
 node-label:
   - "server=true"
 
-# Set the external IP for each node
-node-external-ip: {{ ansible_default_ipv4.address }}
+# Set the external IP to the VIP
+node-external-ip: {{ vip }}
 
 # Custom CIDR settings
 cluster-cidr: "{{ cluster_cidr }}"

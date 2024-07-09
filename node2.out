@@ -1,0 +1,100 @@
+kubectl describe node k8s-rancher-02
+Name:               k8s-rancher-02
+Roles:              control-plane,etcd,master
+Labels:             beta.kubernetes.io/arch=amd64
+                    beta.kubernetes.io/instance-type=rke2
+                    beta.kubernetes.io/os=linux
+                    kubernetes.io/arch=amd64
+                    kubernetes.io/hostname=k8s-rancher-02
+                    kubernetes.io/os=linux
+                    node-role.kubernetes.io/control-plane=true
+                    node-role.kubernetes.io/etcd=true
+                    node-role.kubernetes.io/master=true
+                    node.kubernetes.io/instance-type=rke2
+                    server=true
+Annotations:        alpha.kubernetes.io/provided-node-ip: 10.10.100.6
+                    etcd.rke2.cattle.io/local-snapshots-timestamp: 2024-07-09T12:00:03Z
+                    etcd.rke2.cattle.io/node-address: 10.10.100.6
+                    etcd.rke2.cattle.io/node-name: k8s-rancher-02-71d21d6b
+                    flannel.alpha.coreos.com/backend-data: {"VNI":1,"VtepMAC":"a6:62:db:fd:d8:b3"}
+                    flannel.alpha.coreos.com/backend-type: vxlan
+                    flannel.alpha.coreos.com/kube-subnet-manager: true
+                    flannel.alpha.coreos.com/public-ip: 10.10.100.6
+                    node.alpha.kubernetes.io/ttl: 0
+                    rke2.io/encryption-config-hash: start-7add4f097556e63ece7e2daf96fb2fab5a2a698398093c475cff47a74815e441
+                    rke2.io/hostname: k8s-rancher-02
+                    rke2.io/internal-ip: 10.10.100.6
+                    rke2.io/node-args:
+                      ["server","--write-kubeconfig-mode","0644","--token","********","--server","https://k8s-rancher-01:9345","--tls-san","10.10.100.2","--tls-...
+                    rke2.io/node-config-hash: SXQAZIRR2KKUC37IUJQ76HEDHNY3G4B6CYIQ3KPKFUKLJPXINOSQ====
+                    rke2.io/node-env: {}
+                    volumes.kubernetes.io/controller-managed-attach-detach: true
+CreationTimestamp:  Mon, 08 Jul 2024 22:41:53 +0000
+Taints:             <none>
+Unschedulable:      false
+Lease:
+  HolderIdentity:  k8s-rancher-02
+  AcquireTime:     <unset>
+  RenewTime:       Tue, 09 Jul 2024 14:46:05 +0000
+Conditions:
+  Type                 Status  LastHeartbeatTime                 LastTransitionTime                Reason                       Message
+  ----                 ------  -----------------                 ------------------                ------                       -------
+  NetworkUnavailable   False   Mon, 08 Jul 2024 22:42:29 +0000   Mon, 08 Jul 2024 22:42:29 +0000   FlannelIsUp                  Flannel is running on this node
+  MemoryPressure       False   Tue, 09 Jul 2024 14:42:56 +0000   Mon, 08 Jul 2024 22:41:53 +0000   KubeletHasSufficientMemory   kubelet has sufficient memory available
+  DiskPressure         False   Tue, 09 Jul 2024 14:42:56 +0000   Mon, 08 Jul 2024 22:41:53 +0000   KubeletHasNoDiskPressure     kubelet has no disk pressure
+  PIDPressure          False   Tue, 09 Jul 2024 14:42:56 +0000   Mon, 08 Jul 2024 22:41:53 +0000   KubeletHasSufficientPID      kubelet has sufficient PID available
+  Ready                True    Tue, 09 Jul 2024 14:42:56 +0000   Mon, 08 Jul 2024 22:42:20 +0000   KubeletReady                 kubelet is posting ready status. AppArmor enabled
+  EtcdIsVoter          True    Mon, 08 Jul 2024 22:42:10 +0000   Mon, 08 Jul 2024 22:42:10 +0000   MemberNotLearner             Node is a voting member of the etcd cluster
+Addresses:
+  InternalIP:  10.10.100.6
+  Hostname:    k8s-rancher-02
+Capacity:
+  cpu:                4
+  ephemeral-storage:  59643812Ki
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             7960820Ki
+  pods:               110
+Allocatable:
+  cpu:                4
+  ephemeral-storage:  58021500269
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             7960820Ki
+  pods:               110
+System Info:
+  Machine ID:                 97dd38a5f0524d7e9cfc4cbed4fad7e9
+  System UUID:                18bb6245-a069-bd4b-b8d7-782b4625783a
+  Boot ID:                    08124e0d-d729-4991-924e-8a3285c3c6bf
+  Kernel Version:             5.15.0-112-generic
+  OS Image:                   Ubuntu 22.04.4 LTS
+  Operating System:           linux
+  Architecture:               amd64
+  Container Runtime Version:  containerd://1.7.11-k3s2
+  Kubelet Version:            v1.28.5+rke2r1
+  Kube-Proxy Version:         v1.28.5+rke2r1
+PodCIDR:                      10.42.1.0/24
+PodCIDRs:                     10.42.1.0/24
+ProviderID:                   rke2://k8s-rancher-02
+Non-terminated Pods:          (9 in total)
+  Namespace                   Name                                          CPU Requests  CPU Limits  Memory Requests  Memory Limits  Age
+  ---------                   ----                                          ------------  ----------  ---------------  -------------  ---
+  kube-system                 cloud-controller-manager-k8s-rancher-02       100m (2%)     0 (0%)      128Mi (1%)       0 (0%)         16h
+  kube-system                 etcd-k8s-rancher-02                           200m (5%)     0 (0%)      512Mi (6%)       0 (0%)         16h
+  kube-system                 kube-apiserver-k8s-rancher-02                 250m (6%)     0 (0%)      1Gi (13%)        0 (0%)         16h
+  kube-system                 kube-controller-manager-k8s-rancher-02        200m (5%)     0 (0%)      256Mi (3%)       0 (0%)         16h
+  kube-system                 kube-proxy-k8s-rancher-02                     250m (6%)     0 (0%)      128Mi (1%)       0 (0%)         16h
+  kube-system                 kube-scheduler-k8s-rancher-02                 100m (2%)     0 (0%)      128Mi (1%)       0 (0%)         16h
+  kube-system                 rke2-canal-zhnj9                              250m (6%)     0 (0%)      0 (0%)           0 (0%)         16h
+  kube-system                 rke2-coredns-rke2-coredns-6b795db654-jvfvk    100m (2%)     100m (2%)   128Mi (1%)       128Mi (1%)     16h
+  kube-system                 rke2-ingress-nginx-controller-mgmxh           100m (2%)     0 (0%)      90Mi (1%)        0 (0%)         16h
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  Resource           Requests      Limits
+  --------           --------      ------
+  cpu                1550m (38%)   100m (2%)
+  memory             2394Mi (30%)  128Mi (1%)
+  ephemeral-storage  0 (0%)        0 (0%)
+  hugepages-1Gi      0 (0%)        0 (0%)
+  hugepages-2Mi      0 (0%)        0 (0%)
+Events:              <none>

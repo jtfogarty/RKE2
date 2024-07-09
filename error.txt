@@ -1,0 +1,13 @@
+TASK [add-agent : Deploy RKE2 Agent Configuration] **************************************************
+An exception occurred during task execution. To see the full traceback, use -vvv. The error was: ansible.errors.AnsibleUndefinedVariable: 'rke2_token' is undefined. 'rke2_token' is undefined
+fatal: [node6]: FAILED! => {"changed": false, "msg": "AnsibleUndefinedVariable: 'rke2_token' is undefined. 'rke2_token' is undefined"}
+An exception occurred during task execution. To see the full traceback, use -vvv. The error was: ansible.errors.AnsibleUndefinedVariable: 'rke2_token' is undefined. 'rke2_token' is undefined
+fatal: [node4]: FAILED! => {"changed": false, "msg": "AnsibleUndefinedVariable: 'rke2_token' is undefined. 'rke2_token' is undefined"}
+An exception occurred during task execution. To see the full traceback, use -vvv. The error was: ansible.errors.AnsibleUndefinedVariable: 'rke2_token' is undefined. 'rke2_token' is undefined
+fatal: [node5]: FAILED! => {"changed": false, "msg": "AnsibleUndefinedVariable: 'rke2_token' is undefined. 'rke2_token' is undefined"}
+An exception occurred during task execution. To see the full traceback, use -vvv. The error was: ansible.errors.AnsibleUndefinedVariable: 'rke2_token' is undefined. 'rke2_token' is undefined
+fatal: [node7]: FAILED! => {"changed": false, "msg": "AnsibleUndefinedVariable: 'rke2_token' is undefined. 'rke2_token' is undefined"}
+An exception occurred during task execution. To see the full traceback, use -vvv. The error was: ansible.errors.AnsibleUndefinedVariable: 'rke2_token' is undefined. 'rke2_token' is undefined
+fatal: [node8]: FAILED! => {"changed": false, "msg": "AnsibleUndefinedVariable: 'rke2_token' is undefined. 'rke2_token' is undefined"}
+An exception occurred during task execution. To see the full traceback, use -vvv. The error was: ansible.errors.AnsibleUndefinedVariable: 'rke2_token' is undefined. 'rke2_token' is undefined
+fatal: [node9]: FAILED! => {"changed": false, "msg": "AnsibleUndefinedVariable: 'rke2_token' is undefined. 'rke2_token' is undefined"}

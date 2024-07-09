@@ -7,7 +7,7 @@ bind-address: {{ ansible_default_ipv4.address }}
 advertise-address: {{ ansible_default_ipv4.address }}
 {% else %}
 # Configuration for other server nodes
-server: https://{{ vip }}:6443
+server: https://{{ vip }}:9345
 {% endif %}
 
 tls-san:

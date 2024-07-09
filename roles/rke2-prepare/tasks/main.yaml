@@ -88,6 +88,21 @@
     owner: root
     group: root
     mode: '0644'
+    force: yes
+  when: inventory_hostname in groups['server_nodes']
+  register: rke2_config
+
+- name: Debug - Display RKE2 server configuration
+  ansible.builtin.debug:
+    var: rke2_config
+    verbosity: 2
+  when: inventory_hostname in groups['server_nodes']
+  register: rke2_config
+  
+- name: Debug - Display RKE2 server configuration
+  ansible.builtin.debug:
+    var: rke2_config
+    verbosity: 2
   when: inventory_hostname in groups['server_nodes']
 
 - name: Create systemd service file for RKE2 server

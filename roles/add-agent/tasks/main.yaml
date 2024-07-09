@@ -29,6 +29,12 @@
     group: root
     mode: '0644'
   become: true
+  when: rke2_token is defined
+
+- name: Debug - Display rke2_token in add-agent role
+  ansible.builtin.debug:
+    var: rke2_token
+    verbosity: 2
 
 - name: Create RKE2 agent service file
   ansible.builtin.template:

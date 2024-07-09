@@ -41,6 +41,12 @@
 - name: Distribute RKE2 token to all nodes
   ansible.builtin.set_fact:
     rke2_token: "{{ hostvars[groups['server_nodes'][0]]['rke2_token'] }}"
+  when: groups['server_nodes'][0] in hostvars and 'rke2_token' in hostvars[groups['server_nodes'][0]]
+
+- name: Debug - Display rke2_token
+  ansible.builtin.debug:
+    var: rke2_token
+    verbosity: 2
 
 - name: Ensure token file exists on all server nodes
   ansible.builtin.copy:

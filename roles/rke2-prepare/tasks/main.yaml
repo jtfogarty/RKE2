@@ -212,7 +212,7 @@
 - name: Debug - Check API server accessibility
   ansible.builtin.command: curl -k https://{{ vip }}:6443
   register: api_server_check
-  ignore_errors: yes
+  ignore_errors: true
   changed_when: false
 
 - name: Debug - Show API server check results

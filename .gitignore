@@ -4,6 +4,7 @@
         "path": ".gitignore",
         "content": "# Ansible
 *.retry
+
 ansible.cfg  # If you prefer to not version control this file
 
 # Python

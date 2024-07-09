@@ -5,11 +5,18 @@
     state: directory
     mode: '0755'
 
+# Check if RKE2 binary already exists
+- name: Check if RKE2 binary exists
+  ansible.builtin.stat:
+    path: "{{ rke2_install_dir }}/rke2-{{ rke2_version }}"
+  register: rke2_binary
+
 # Remove old RKE2 binary
 - name: Remove old RKE2 binary
   ansible.builtin.file:
     path: "{{ rke2_install_dir }}/rke2"
     state: absent
+  when: not rke2_binary.stat.exists or force_rke2_download | default(false) | bool
 
 # Download the RKE2 binary with version-specific name
 - name: Download RKE2 binary
@@ -17,6 +24,7 @@
     url: "{{ rke2_binary_url }}"
     dest: "{{ rke2_install_dir }}/rke2-{{ rke2_version }}"
     mode: '0755'
+  when: not rke2_binary.stat.exists or force_rke2_download | default(false) | bool
 
 # Create a symlink to the version-specific binary
 - name: Create symlink to RKE2 binary

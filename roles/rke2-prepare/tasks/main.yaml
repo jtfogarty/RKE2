@@ -171,3 +171,22 @@
   ansible.builtin.shell: source /home/{{ ansible_user }}/.bashrc
   args:
     executable: /bin/bash
+
+- name: Debug - Display kubeconfig contents
+  ansible.builtin.command: cat /home/{{ ansible_user }}/.kube/config
+  register: kubeconfig_contents
+  changed_when: false
+
+- name: Debug - Show kubeconfig contents
+  ansible.builtin.debug:
+    var: kubeconfig_contents.stdout_lines
+
+- name: Debug - Check API server accessibility
+  ansible.builtin.command: curl -k https://{{ vip }}:6443
+  register: api_server_check
+  ignore_errors: yes
+  changed_when: false
+
+- name: Debug - Show API server check results
+  ansible.builtin.debug:
+    var: api_server_check

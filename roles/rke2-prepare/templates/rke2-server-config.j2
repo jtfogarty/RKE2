@@ -7,16 +7,16 @@ bind-address: {{ ansible_default_ipv4.address }}
 advertise-address: {{ ansible_default_ipv4.address }}
 {% else %}
 # Configuration for other server nodes
-server: https://{{ vip }}:9345
+server: https://{{ vip }}:6443
 {% endif %}
 
 tls-san:
   - {{ vip }}
   - {{ ansible_fqdn }}
   - {{ ansible_default_ipv4.address }}
-  {% for host in groups['server_nodes'] %}
-  - {{ hostvars[host]['ansible_host'] }}
-  {% endfor %}
+  - {{ hostvars[groups['server_nodes'][0]]['ansible_host'] }}
+  - {{ hostvars[groups['server_nodes'][1]]['ansible_host'] }}
+  - {{ hostvars[groups['server_nodes'][2]]['ansible_host'] }}
 
 node-label:
   - "server=true"

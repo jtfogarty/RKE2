@@ -7,7 +7,7 @@ ansible_python_interpreter: /usr/bin/python3.10
 vip_interface: enp1s0
 vip: 10.10.100.2  # VIP configured in pfSense
 
-metallb_version: "v0.13.12"
+metallb_version: "v0.13.10"
 lb_range: "10.10.102.50-10.10.102.100"  # Ensure this range is outside the Kubernetes VLAN range
 lb_pool_name: "first-pool"
 

@@ -5,17 +5,16 @@ token: {{ rke2_token }}  # Use the dynamic token instead of a static one
 bind-address: {{ ansible_default_ipv4.address }}
 advertise-address: {{ ansible_default_ipv4.address }}
 {% else %}
-server: https://{{ vip }}:6443
+server: https://{{ vip }}:9345
 {% endif %}
 
 tls-san:
   - {{ vip }}
-  - my-kubernetes-domain.com
-  - {{ hostvars[groups['server_nodes'][0]]['ansible_host'] }}
-  - {{ hostvars[groups['server_nodes'][1]]['ansible_host'] }}
-  - {{ hostvars[groups['server_nodes'][2]]['ansible_host'] }}
   - {{ ansible_fqdn }}
   - {{ ansible_default_ipv4.address }}
+  {% for host in groups['server_nodes'] %}
+  - {{ hostvars[host]['ansible_host'] }}
+  {% endfor %}
 
 node-label:
   - "server=true"

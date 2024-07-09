@@ -112,7 +112,7 @@
 - name: Wait for kubectl
   ansible.builtin.wait_for:
     path: /var/lib/rancher/rke2/bin/kubectl
-  when: inventory_hostname == groups['server_nodes'][0]
+  when: inventory_hostname in groups['server_nodes']
 
 - name: Copy kubectl to user bin
   ansible.builtin.copy:
@@ -121,12 +121,12 @@
     mode: '0755'
     remote_src: true
   become: true
-  when: inventory_hostname == groups['server_nodes'][0]
+  when: inventory_hostname in groups['server_nodes']
 
 - name: Wait for kubectl in user bin
   ansible.builtin.wait_for:
     path: /usr/local/bin/kubectl
-  when: inventory_hostname == groups['server_nodes'][0]
+  when: inventory_hostname in groups['server_nodes']
 
 - name: Ensure .kube directory exists in user's home on all server nodes
   ansible.builtin.file:
@@ -139,6 +139,20 @@
   ansible.builtin.wait_for:
     path: /etc/rancher/rke2/rke2.yaml
   when: inventory_hostname == groups['server_nodes'][0]
+
+- name: Fetch kubeconfig from first server node
+  ansible.builtin.fetch:
+    src: /etc/rancher/rke2/rke2.yaml
+    dest: /tmp/rke2.yaml
+    flat: yes
+  when: inventory_hostname == groups['server_nodes'][0]
+
+- name: Ensure .kube directory exists on all server nodes
+  ansible.builtin.file:
+    path: "/home/{{ ansible_user }}/.kube"
+    state: directory
+    mode: '0755'
+  become: true
 
 - name: Fetch kubeconfig from first server node
   ansible.builtin.fetch:
@@ -172,6 +186,20 @@
   args:
     executable: /bin/bash
 
+- name: Wait for kubeconfig to be accessible
+  ansible.builtin.wait_for:
+    path: "/home/{{ ansible_user }}/.kube/config"
+    state: present
+    timeout: 300
+
+- name: Verify kubeconfig is valid
+  ansible.builtin.command: kubectl get nodes
+  register: kubectl_result
+  changed_when: false
+  failed_when: kubectl_result.rc != 0
+  retries: 6
+  delay: 10
+
 - name: Debug - Display kubeconfig contents
   ansible.builtin.command: cat /home/{{ ansible_user }}/.kube/config
   register: kubeconfig_contents
@@ -184,7 +212,7 @@
 - name: Debug - Check API server accessibility
   ansible.builtin.command: curl -k https://{{ vip }}:6443
   register: api_server_check
-  ignore_errors: yes
+  ignore_errors: true
   changed_when: false
 
 - name: Debug - Show API server check results

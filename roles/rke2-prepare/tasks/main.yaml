@@ -208,12 +208,14 @@
     timeout: 300
 
 - name: Verify kubeconfig is valid
-  ansible.builtin.command: kubectl get nodes
+  ansible.builtin.command: kubectl --kubeconfig /etc/rancher/rke2/rke2.yaml get nodes
   register: kubectl_result
   changed_when: false
   failed_when: kubectl_result.rc != 0
   retries: 6
   delay: 10
+  environment:
+    KUBECONFIG: /etc/rancher/rke2/rke2.yaml
 
 - name: Debug - Display kubeconfig contents
   ansible.builtin.command: cat /home/{{ ansible_user }}/.kube/config

@@ -108,7 +108,7 @@
     mode: '0644'
   when: inventory_hostname in groups['agent_nodes']
 
-# Set up kubectl
+# Set up kubectl and kubeconfig
 - name: Wait for kubectl
   ansible.builtin.wait_for:
     path: /var/lib/rancher/rke2/bin/kubectl
@@ -128,26 +128,46 @@
     path: /usr/local/bin/kubectl
   when: inventory_hostname == groups['server_nodes'][0]
 
-# Set up kubeconfig
-- name: Ensure .kube directory exists in user's home
+- name: Ensure .kube directory exists in user's home on all server nodes
   ansible.builtin.file:
     path: "/home/{{ ansible_user }}/.kube"
     state: directory
     mode: '0755'
   become: true
 
-- name: Copy config file to user home directory
-  ansible.builtin.copy:
-    src: /etc/rancher/rke2/rke2.yaml
-    dest: "/home/{{ ansible_user }}/.kube/config"
-    remote_src: true
-    owner: "{{ ansible_user }}"
-    mode: "u=rw,g=,o="
+- name: Wait for RKE2 kubeconfig file
+  ansible.builtin.wait_for:
+    path: /etc/rancher/rke2/rke2.yaml
   when: inventory_hostname == groups['server_nodes'][0]
 
-- name: Replace IP address with server1
-  ansible.builtin.replace:
-    path: /home/{{ ansible_user }}/.kube/config
-    regexp: '127.0.0.1'
-    replace: "{{ hostvars[groups['server_nodes'][0]]['ansible_host'] }}"
+- name: Fetch kubeconfig from first server node
+  ansible.builtin.fetch:
+    src: /etc/rancher/rke2/rke2.yaml
+    dest: /tmp/rke2.yaml
+    flat: yes
   when: inventory_hostname == groups['server_nodes'][0]
+
+- name: Copy kubeconfig to all server nodes
+  ansible.builtin.copy:
+    src: /tmp/rke2.yaml
+    dest: "/home/{{ ansible_user }}/.kube/config"
+    owner: "{{ ansible_user }}"
+    mode: "u=rw,g=,o="
+  become: true
+
+- name: Replace localhost with VIP in kubeconfig
+  ansible.builtin.replace:
+    path: "/home/{{ ansible_user }}/.kube/config"
+    regexp: 'https://127.0.0.1:6443'
+    replace: "https://{{ vip }}:6443"
+
+- name: Set KUBECONFIG environment variable
+  ansible.builtin.lineinfile:
+    path: "/home/{{ ansible_user }}/.bashrc"
+    line: "export KUBECONFIG=/home/{{ ansible_user }}/.kube/config"
+    create: yes
+
+- name: Reload .bashrc
+  ansible.builtin.shell: source /home/{{ ansible_user }}/.bashrc
+  args:
+    executable: /bin/bash

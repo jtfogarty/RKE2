@@ -147,6 +147,20 @@
     flat: yes
   when: inventory_hostname == groups['server_nodes'][0]
 
+- name: Ensure .kube directory exists on all server nodes
+  ansible.builtin.file:
+    path: "/home/{{ ansible_user }}/.kube"
+    state: directory
+    mode: '0755'
+  become: true
+
+- name: Fetch kubeconfig from first server node
+  ansible.builtin.fetch:
+    src: /etc/rancher/rke2/rke2.yaml
+    dest: /tmp/rke2.yaml
+    flat: yes
+  when: inventory_hostname == groups['server_nodes'][0]
+
 - name: Copy kubeconfig to all server nodes
   ansible.builtin.copy:
     src: /tmp/rke2.yaml
@@ -171,6 +185,20 @@
   ansible.builtin.shell: source /home/{{ ansible_user }}/.bashrc
   args:
     executable: /bin/bash
+
+- name: Wait for kubeconfig to be accessible
+  ansible.builtin.wait_for:
+    path: "/home/{{ ansible_user }}/.kube/config"
+    state: present
+    timeout: 300
+
+- name: Verify kubeconfig is valid
+  ansible.builtin.command: kubectl get nodes
+  register: kubectl_result
+  changed_when: false
+  failed_when: kubectl_result.rc != 0
+  retries: 6
+  delay: 10
 
 - name: Debug - Display kubeconfig contents
   ansible.builtin.command: cat /home/{{ ansible_user }}/.kube/config

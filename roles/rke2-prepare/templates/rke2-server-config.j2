@@ -1,21 +1,19 @@
 write-kubeconfig-mode: "0644"
-token: {{ rke2_token }}  # Use the dynamic token instead of a static one
+token: {{ rke2_token }}
 
 {% if inventory_hostname == groups['server_nodes'][0] %}
+# Configuration for the first server node
 bind-address: {{ ansible_default_ipv4.address }}
-advertise-address: {{ vip }}
+advertise-address: {{ ansible_default_ipv4.address }}
 {% else %}
-server: https://{{ vip }}:6443
+# Configuration for other server nodes
+server: https://{{ vip }}:9345
 {% endif %}
 
 tls-san:
   - {{ vip }}
-  - my-kubernetes-domain.com
   - {{ ansible_fqdn }}
   - {{ ansible_default_ipv4.address }}
-  - {{ hostvars[groups['server_nodes'][0]]['ansible_host'] }}
-  - {{ hostvars[groups['server_nodes'][1]]['ansible_host'] }}
-  - {{ hostvars[groups['server_nodes'][2]]['ansible_host'] }}
   {% for host in groups['server_nodes'] %}
   - {{ hostvars[host]['ansible_host'] }}
   {% endfor %}
@@ -23,19 +21,20 @@ tls-san:
 node-label:
   - "server=true"
 
-disable:
-  - rke2-ingress-nginx
-
 # Custom CIDR settings
 cluster-cidr: "{{ cluster_cidr }}"
 service-cidr: "{{ service_cidr }}"
 
-# Ensure all nodes use the VIP for API server communication
+# Kubernetes API server configuration
 kube-apiserver-arg:
   - "advertise-address={{ vip }}"
 
-# Enable leader election for all control plane components
+# Enable leader election for control plane components
 kube-controller-manager-arg:
   - "leader-elect=true"
 kube-scheduler-arg:
   - "leader-elect=true"
+
+# Disable default ingress as we'll set up our own
+disable:
+  - rke2-ingress-nginx

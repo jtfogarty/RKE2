@@ -1,0 +1,83 @@
+ansible-playbook site.yaml -i inventory/hosts.ini -v
+Using /etc/ansible/ansible.cfg as config file
+
+PLAY [Prepare all nodes] ****************************************************************************
+
+TASK [Gathering Facts] ******************************************************************************
+ok: [node2]
+ok: [node1]
+ok: [node3]
+ok: [node4]
+ok: [node5]
+ok: [node7]
+ok: [node8]
+ok: [node9]
+ok: [node6]
+
+TASK [prepare-nodes : Enable IPv4 forwarding] *******************************************************
+ok: [node5] => {"changed": false}
+ok: [node1] => {"changed": false}
+ok: [node3] => {"changed": false}
+ok: [node2] => {"changed": false}
+ok: [node4] => {"changed": false}
+ok: [node6] => {"changed": false}
+ok: [node7] => {"changed": false}
+ok: [node8] => {"changed": false}
+ok: [node9] => {"changed": false}
+
+TASK [prepare-nodes : Enable IPv6 forwarding] *******************************************************
+ok: [node5] => {"changed": false}
+ok: [node1] => {"changed": false}
+ok: [node2] => {"changed": false}
+ok: [node3] => {"changed": false}
+ok: [node4] => {"changed": false}
+ok: [node6] => {"changed": false}
+ok: [node8] => {"changed": false}
+ok: [node7] => {"changed": false}
+ok: [node9] => {"changed": false}
+
+TASK [rke2-download : Create directory for RKE2 binary] *********************************************
+ok: [node5] => {"changed": false, "gid": 0, "group": "root", "mode": "0755", "owner": "root", "path": "/usr/local/bin", "size": 4096, "state": "directory", "uid": 0}
+ok: [node3] => {"changed": false, "gid": 0, "group": "root", "mode": "0755", "owner": "root", "path": "/usr/local/bin", "size": 4096, "state": "directory", "uid": 0}
+ok: [node1] => {"changed": false, "gid": 0, "group": "root", "mode": "0755", "owner": "root", "path": "/usr/local/bin", "size": 4096, "state": "directory", "uid": 0}
+ok: [node2] => {"changed": false, "gid": 0, "group": "root", "mode": "0755", "owner": "root", "path": "/usr/local/bin", "size": 4096, "state": "directory", "uid": 0}
+ok: [node4] => {"changed": false, "gid": 0, "group": "root", "mode": "0755", "owner": "root", "path": "/usr/local/bin", "size": 4096, "state": "directory", "uid": 0}
+ok: [node6] => {"changed": false, "gid": 0, "group": "root", "mode": "0755", "owner": "root", "path": "/usr/local/bin", "size": 4096, "state": "directory", "uid": 0}
+ok: [node7] => {"changed": false, "gid": 0, "group": "root", "mode": "0755", "owner": "root", "path": "/usr/local/bin", "size": 4096, "state": "directory", "uid": 0}
+ok: [node8] => {"changed": false, "gid": 0, "group": "root", "mode": "0755", "owner": "root", "path": "/usr/local/bin", "size": 4096, "state": "directory", "uid": 0}
+ok: [node9] => {"changed": false, "gid": 0, "group": "root", "mode": "0755", "owner": "root", "path": "/usr/local/bin", "size": 4096, "state": "directory", "uid": 0}
+
+TASK [rke2-download : Remove old RKE2 binary] *******************************************************
+changed: [node5] => {"changed": true, "path": "/usr/local/bin/rke2", "state": "absent"}
+changed: [node1] => {"changed": true, "path": "/usr/local/bin/rke2", "state": "absent"}
+changed: [node2] => {"changed": true, "path": "/usr/local/bin/rke2", "state": "absent"}
+changed: [node3] => {"changed": true, "path": "/usr/local/bin/rke2", "state": "absent"}
+changed: [node4] => {"changed": true, "path": "/usr/local/bin/rke2", "state": "absent"}
+changed: [node6] => {"changed": true, "path": "/usr/local/bin/rke2", "state": "absent"}
+changed: [node7] => {"changed": true, "path": "/usr/local/bin/rke2", "state": "absent"}
+changed: [node8] => {"changed": true, "path": "/usr/local/bin/rke2", "state": "absent"}
+changed: [node9] => {"changed": true, "path": "/usr/local/bin/rke2", "state": "absent"}
+
+TASK [rke2-download : Download RKE2 binary] *********************************************************
+ok: [node5] => {"changed": false, "dest": "/usr/local/bin/rke2-v1.28.5+rke2r1", "elapsed": 0, "gid": 0, "group": "root", "mode": "0755", "msg": "HTTP Error 304: Not Modified", "owner": "root", "size": 90006504, "state": "file", "status_code": 304, "uid": 0, "url": "https://github.com/rancher/rke2/releases/download/v1.28.5+rke2r1/rke2.linux-amd64"}
+ok: [node1] => {"changed": false, "dest": "/usr/local/bin/rke2-v1.28.5+rke2r1", "elapsed": 0, "gid": 0, "group": "root", "mode": "0755", "msg": "HTTP Error 304: Not Modified", "owner": "root", "size": 90006504, "state": "file", "status_code": 304, "uid": 0, "url": "https://github.com/rancher/rke2/releases/download/v1.28.5+rke2r1/rke2.linux-amd64"}
+ok: [node2] => {"changed": false, "dest": "/usr/local/bin/rke2-v1.28.5+rke2r1", "elapsed": 0, "gid": 0, "group": "root", "mode": "0755", "msg": "HTTP Error 304: Not Modified", "owner": "root", "size": 90006504, "state": "file", "status_code": 304, "uid": 0, "url": "https://github.com/rancher/rke2/releases/download/v1.28.5+rke2r1/rke2.linux-amd64"}
+ok: [node3] => {"changed": false, "dest": "/usr/local/bin/rke2-v1.28.5+rke2r1", "elapsed": 0, "gid": 0, "group": "root", "mode": "0755", "msg": "HTTP Error 304: Not Modified", "owner": "root", "size": 90006504, "state": "file", "status_code": 304, "uid": 0, "url": "https://github.com/rancher/rke2/releases/download/v1.28.5+rke2r1/rke2.linux-amd64"}
+ok: [node4] => {"changed": false, "dest": "/usr/local/bin/rke2-v1.28.5+rke2r1", "elapsed": 0, "gid": 0, "group": "root", "mode": "0755", "msg": "HTTP Error 304: Not Modified", "owner": "root", "size": 90006504, "state": "file", "status_code": 304, "uid": 0, "url": "https://github.com/rancher/rke2/releases/download/v1.28.5+rke2r1/rke2.linux-amd64"}
+ok: [node6] => {"changed": false, "dest": "/usr/local/bin/rke2-v1.28.5+rke2r1", "elapsed": 0, "gid": 0, "group": "root", "mode": "0755", "msg": "HTTP Error 304: Not Modified", "owner": "root", "size": 90006504, "state": "file", "status_code": 304, "uid": 0, "url": "https://github.com/rancher/rke2/releases/download/v1.28.5+rke2r1/rke2.linux-amd64"}
+ok: [node7] => {"changed": false, "dest": "/usr/local/bin/rke2-v1.28.5+rke2r1", "elapsed": 0, "gid": 0, "group": "root", "mode": "0755", "msg": "HTTP Error 304: Not Modified", "owner": "root", "size": 90006504, "state": "file", "status_code": 304, "uid": 0, "url": "https://github.com/rancher/rke2/releases/download/v1.28.5+rke2r1/rke2.linux-amd64"}
+ok: [node8] => {"changed": false, "dest": "/usr/local/bin/rke2-v1.28.5+rke2r1", "elapsed": 0, "gid": 0, "group": "root", "mode": "0755", "msg": "HTTP Error 304: Not Modified", "owner": "root", "size": 90006504, "state": "file", "status_code": 304, "uid": 0, "url": "https://github.com/rancher/rke2/releases/download/v1.28.5+rke2r1/rke2.linux-amd64"}
+ok: [node9] => {"changed": false, "dest": "/usr/local/bin/rke2-v1.28.5+rke2r1", "elapsed": 0, "gid": 0, "group": "root", "mode": "0755", "msg": "HTTP Error 304: Not Modified", "owner": "root", "size": 90006504, "state": "file", "status_code": 304, "uid": 0, "url": "https://github.com/rancher/rke2/releases/download/v1.28.5+rke2r1/rke2.linux-amd64"}
+
+TASK [rke2-download : Create symlink to RKE2 binary] ************************************************
+changed: [node5] => {"changed": true, "dest": "/usr/local/bin/rke2", "gid": 0, "group": "root", "mode": "0777", "owner": "root", "size": 34, "src": "/usr/local/bin/rke2-v1.28.5+rke2r1", "state": "link", "uid": 0}
+changed: [node1] => {"changed": true, "dest": "/usr/local/bin/rke2", "gid": 0, "group": "root", "mode": "0777", "owner": "root", "size": 34, "src": "/usr/local/bin/rke2-v1.28.5+rke2r1", "state": "link", "uid": 0}
+changed: [node2] => {"changed": true, "dest": "/usr/local/bin/rke2", "gid": 0, "group": "root", "mode": "0777", "owner": "root", "size": 34, "src": "/usr/local/bin/rke2-v1.28.5+rke2r1", "state": "link", "uid": 0}
+changed: [node3] => {"changed": true, "dest": "/usr/local/bin/rke2", "gid": 0, "group": "root", "mode": "0777", "owner": "root", "size": 34, "src": "/usr/local/bin/rke2-v1.28.5+rke2r1", "state": "link", "uid": 0}
+changed: [node4] => {"changed": true, "dest": "/usr/local/bin/rke2", "gid": 0, "group": "root", "mode": "0777", "owner": "root", "size": 34, "src": "/usr/local/bin/rke2-v1.28.5+rke2r1", "state": "link", "uid": 0}
+changed: [node6] => {"changed": true, "dest": "/usr/local/bin/rke2", "gid": 0, "group": "root", "mode": "0777", "owner": "root", "size": 34, "src": "/usr/local/bin/rke2-v1.28.5+rke2r1", "state": "link", "uid": 0}
+changed: [node7] => {"changed": true, "dest": "/usr/local/bin/rke2", "gid": 0, "group": "root", "mode": "0777", "owner": "root", "size": 34, "src": "/usr/local/bin/rke2-v1.28.5+rke2r1", "state": "link", "uid": 0}
+changed: [node8] => {"changed": true, "dest": "/usr/local/bin/rke2", "gid": 0, "group": "root", "mode": "0777", "owner": "root", "size": 34, "src": "/usr/local/bin/rke2-v1.28.5+rke2r1", "state": "link", "uid": 0}
+changed: [node9] => {"changed": true, "dest": "/usr/local/bin/rke2", "gid": 0, "group": "root", "mode": "0777", "owner": "root", "size": 34, "src": "/usr/local/bin/rke2-v1.28.5+rke2r1", "state": "link", "uid": 0}
+err.txt                                                                                                                                                                                                                                                                                                                                                   1,1            Top
+"err.txt" 273L, 65317C

@@ -5,7 +5,7 @@ token: {{ rke2_token }}  # Use the dynamic token instead of a static one
 bind-address: {{ ansible_default_ipv4.address }}
 advertise-address: {{ ansible_default_ipv4.address }}
 {% else %}
-server: https://{{ vip }}:9345
+server: https://{{ vip }}:6443
 {% endif %}
 
 tls-san:

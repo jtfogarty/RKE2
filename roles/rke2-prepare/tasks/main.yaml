@@ -43,10 +43,6 @@
     rke2_token: "{{ hostvars[groups['server_nodes'][0]]['rke2_token'] }}"
   when: groups['server_nodes'][0] in hostvars and 'rke2_token' in hostvars[groups['server_nodes'][0]]
 
-- name: Debug - Display rke2_token
-  ansible.builtin.debug:
-    var: rke2_token
-    verbosity: 2
 
 - name: Ensure token file exists on all server nodes
   ansible.builtin.copy:
@@ -92,18 +88,6 @@
   when: inventory_hostname in groups['server_nodes']
   register: rke2_config
 
-- name: Debug - Display RKE2 server configuration
-  ansible.builtin.debug:
-    var: rke2_config
-    verbosity: 2
-  when: inventory_hostname in groups['server_nodes']
-  register: rke2_config
-  
-- name: Debug - Display RKE2 server configuration
-  ansible.builtin.debug:
-    var: rke2_config
-    verbosity: 2
-  when: inventory_hostname in groups['server_nodes']
 
 - name: Create systemd service file for RKE2 server
   ansible.builtin.template:
@@ -217,21 +201,3 @@
   environment:
     KUBECONFIG: /etc/rancher/rke2/rke2.yaml
 
-- name: Debug - Display kubeconfig contents
-  ansible.builtin.command: cat /home/{{ ansible_user }}/.kube/config
-  register: kubeconfig_contents
-  changed_when: false
-
-- name: Debug - Show kubeconfig contents
-  ansible.builtin.debug:
-    var: kubeconfig_contents.stdout_lines
-
-- name: Debug - Check API server accessibility
-  ansible.builtin.command: curl -k https://{{ vip }}:6443
-  register: api_server_check
-  ignore_errors: true
-  changed_when: false
-
-- name: Debug - Show API server check results
-  ansible.builtin.debug:
-    var: api_server_check

@@ -3,7 +3,7 @@ token: {{ rke2_token }}  # Use the dynamic token instead of a static one
 
 {% if inventory_hostname == groups['server_nodes'][0] %}
 bind-address: {{ ansible_default_ipv4.address }}
-advertise-address: {{ ansible_default_ipv4.address }}
+advertise-address: {{ vip }}
 {% else %}
 server: https://{{ vip }}:6443
 {% endif %}
@@ -29,3 +29,13 @@ disable:
 # Custom CIDR settings
 cluster-cidr: "{{ cluster_cidr }}"
 service-cidr: "{{ service_cidr }}"
+
+# Ensure all nodes use the VIP for API server communication
+kube-apiserver-arg:
+  - "advertise-address={{ vip }}"
+
+# Enable leader election for all control plane components
+kube-controller-manager-arg:
+  - "leader-elect=true"
+kube-scheduler-arg:
+  - "leader-elect=true"

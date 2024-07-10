@@ -29,7 +29,6 @@
   ansible.builtin.command: "helm repo add {{ item.name }} {{ item.url }}"
   loop:
     - { name: 'rancher-stable', url: 'https://releases.rancher.com/server-charts/stable' }
-    - { name: 'rancher-latest', url: 'https://releases.rancher.com/server-charts/latest' }
     - { name: 'jetstack', url: 'https://charts.jetstack.io' }
   become: false
 
@@ -37,7 +36,6 @@
   ansible.builtin.command: "helm repo add {{ item.name }} {{ item.url }}"
   loop:
     - { name: 'rancher-stable', url: 'https://releases.rancher.com/server-charts/stable' }
-    - { name: 'rancher-latest', url: 'https://releases.rancher.com/server-charts/latest' }
     - { name: 'jetstack', url: 'https://charts.jetstack.io' }
   become: true
 

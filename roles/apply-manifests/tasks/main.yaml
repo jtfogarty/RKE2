@@ -64,9 +64,11 @@
 - name: Apply metallb ipppool
   ansible.builtin.command:
     cmd: kubectl apply -f /home/{{ ansible_user }}/ippool.yaml
-  become_user: "{{ ansible_user }}"
+  become: false
   changed_when: true
   when: inventory_hostname == groups['server_nodes'][0]
+  environment:
+    KUBECONFIG: /home/{{ ansible_user }}/.kube/config
 
 # Rancher installation tasks
 - name: Create namespace for Rancher
@@ -95,13 +97,13 @@
 
 - name: Install cert-manager CRDs
   kubernetes.core.k8s:
-    kubeconfig: "/etc/rancher/rke2/rke2.yaml"
+    kubeconfig: "/home/{{ ansible_user }}/.kube/config"
     state: present
     src: "https://github.com/cert-manager/cert-manager/releases/download/{{ cert_manager_version }}/cert-manager.crds.yaml"
   when: inventory_hostname == groups['server_nodes'][0]
-  become: true
+  become: false
   environment:
-    KUBECONFIG: /etc/rancher/rke2/rke2.yaml
+    KUBECONFIG: /home/{{ ansible_user }}/.kube/config
 
 - name: Create cert-manager namespace
   kubernetes.core.k8s:

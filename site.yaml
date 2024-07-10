@@ -48,7 +48,6 @@
           kind: Namespace
           metadata:
             name: cattle-system
-      become: true
       become: false
 
 - name: Configure RKE2 agent nodes

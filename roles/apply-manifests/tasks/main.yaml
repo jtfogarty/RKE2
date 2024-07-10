@@ -106,6 +106,25 @@
   when: inventory_hostname == groups['server_nodes'][0]
   become: true
 
+- name: Remove existing cert-manager CRDs
+  kubernetes.core.k8s:
+    kubeconfig: "/etc/rancher/rke2/rke2.yaml"
+    state: absent
+    definition:
+      apiVersion: apiextensions.k8s.io/v1
+      kind: CustomResourceDefinition
+      metadata:
+        name: "{{ item }}"
+  loop:
+    - certificaterequests.cert-manager.io
+    - certificates.cert-manager.io
+    - challenges.acme.cert-manager.io
+    - clusterissuers.cert-manager.io
+    - issuers.cert-manager.io
+    - orders.acme.cert-manager.io
+  when: inventory_hostname == groups['server_nodes'][0]
+  become: true
+
 - name: Deploy cert-manager
   kubernetes.core.helm:
     kubeconfig: "/etc/rancher/rke2/rke2.yaml"

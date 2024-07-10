@@ -100,7 +100,7 @@
     - name: Deploy cert-manager
       kubernetes.core.helm:
         name: cert-manager
-        chart_ref: jetstack/cert-manager
+        chart_ref: jetstack/cert-manager --version {{ cert_manager_version }}
         release_namespace: cert-manager
         create_namespace: true
         values:

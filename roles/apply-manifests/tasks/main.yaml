@@ -75,6 +75,17 @@
     KUBECONFIG: /home/{{ ansible_user }}/.kube/config
 
 # Rancher installation tasks
+- name: Temporarily disable Rancher webhook
+  kubernetes.core.k8s:
+    kubeconfig: "/etc/rancher/rke2/rke2.yaml"
+    state: patched
+    kind: ValidatingWebhookConfiguration
+    name: rancher.cattle.io
+    definition:
+      webhooks:
+        - name: rancher.cattle.io.namespaces
+          failurePolicy: Ignore
+
 - name: Create namespace for Rancher
   kubernetes.core.k8s:
     kubeconfig: "/etc/rancher/rke2/rke2.yaml"
@@ -84,6 +95,17 @@
       kind: Namespace
       metadata:
         name: cattle-system
+
+- name: Re-enable Rancher webhook
+  kubernetes.core.k8s:
+    kubeconfig: "/etc/rancher/rke2/rke2.yaml"
+    state: patched
+    kind: ValidatingWebhookConfiguration
+    name: rancher.cattle.io
+    definition:
+      webhooks:
+        - name: rancher.cattle.io.namespaces
+          failurePolicy: Fail
   when: inventory_hostname == groups['server_nodes'][0]
   become: true
   environment:

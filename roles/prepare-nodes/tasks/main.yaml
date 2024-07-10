@@ -25,12 +25,26 @@
   args:
     creates: /usr/local/bin/helm
 
-- name: Add Rancher Helm repository
-  ansible.builtin.command: helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
-  args:
-    creates: /root/.config/helm/repositories.yaml
+- name: Add Helm repositories for ansible user
+  ansible.builtin.command: "helm repo add {{ item.name }} {{ item.url }}"
+  loop:
+    - { name: 'rancher-stable', url: 'https://releases.rancher.com/server-charts/stable' }
+    - { name: 'rancher-latest', url: 'https://releases.rancher.com/server-charts/latest' }
+    - { name: 'jetstack', url: 'https://charts.jetstack.io' }
+  become: false
+
+- name: Add Helm repositories for root user
+  ansible.builtin.command: "helm repo add {{ item.name }} {{ item.url }}"
+  loop:
+    - { name: 'rancher-stable', url: 'https://releases.rancher.com/server-charts/stable' }
+    - { name: 'rancher-latest', url: 'https://releases.rancher.com/server-charts/latest' }
+    - { name: 'jetstack', url: 'https://charts.jetstack.io' }
   become: true
 
-- name: Update Helm repositories
+- name: Update Helm repositories for ansible user
+  ansible.builtin.command: helm repo update
+  become: false
+
+- name: Update Helm repositories for root user
   ansible.builtin.command: helm repo update
   become: true

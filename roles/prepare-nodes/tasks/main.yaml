@@ -24,3 +24,13 @@
   ansible.builtin.command: /tmp/get_helm.sh
   args:
     creates: /usr/local/bin/helm
+
+- name: Add Rancher Helm repository
+  ansible.builtin.command: helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
+  args:
+    creates: /root/.config/helm/repositories.yaml
+  become: true
+
+- name: Update Helm repositories
+  ansible.builtin.command: helm repo update
+  become: true

@@ -44,7 +44,7 @@
     owner: root
     group: root
     mode: '0644'
-    force: no
+    force: "{{ overwrite_agent_config | default(false) }}"
   become: true
 
 - name: Ensure RKE2 agents are enabled and running

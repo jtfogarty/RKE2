@@ -41,12 +41,14 @@
   tasks:
     - name: Create namespace for Rancher
       kubernetes.core.k8s:
+        kubeconfig: "/etc/rancher/rke2/rke2.yaml"
         state: present
         definition:
           apiVersion: v1
           kind: Namespace
           metadata:
             name: cattle-system
+      become: true
       become: false
 
 - name: Configure RKE2 agent nodes

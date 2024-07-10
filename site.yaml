@@ -36,6 +36,18 @@
         var: token_file
         verbosity: 2
 
+- name: Create namespace for Rancher
+  hosts: server_nodes[0]
+  tasks:
+    - name: Create namespace for Rancher
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: cattle-system
+
 - name: Configure RKE2 agent nodes
   hosts: agent_nodes
   roles:
@@ -68,14 +80,6 @@
 - name: Deploy Rancher
   hosts: server_nodes
   tasks:
-    - name: Create namespace for Rancher
-      kubernetes.core.k8s:
-        state: present
-        definition:
-          apiVersion: v1
-          kind: Namespace
-          metadata:
-            name: cattle-system
 
     - name: Install cert-manager CRDs
       kubernetes.core.k8s:

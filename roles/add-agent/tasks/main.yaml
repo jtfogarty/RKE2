@@ -35,7 +35,8 @@
     mode: '0644'
     force: "{{ overwrite_agent_config | default(false) }}"
   become: true
-
+  when: rke2_token is defined
+  
 - name: Debug - Display rke2_token in add-agent role
   ansible.builtin.debug:
     var: rke2_token

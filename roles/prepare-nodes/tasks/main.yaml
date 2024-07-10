@@ -24,3 +24,25 @@
   ansible.builtin.command: /tmp/get_helm.sh
   args:
     creates: /usr/local/bin/helm
+
+- name: Add Helm repositories for ansible user
+  ansible.builtin.command: "helm repo add {{ item.name }} {{ item.url }}"
+  loop:
+    - { name: 'rancher-stable', url: 'https://releases.rancher.com/server-charts/stable' }
+    - { name: 'jetstack', url: 'https://charts.jetstack.io' }
+  become: false
+
+- name: Add Helm repositories for root user
+  ansible.builtin.command: "helm repo add {{ item.name }} {{ item.url }}"
+  loop:
+    - { name: 'rancher-stable', url: 'https://releases.rancher.com/server-charts/stable' }
+    - { name: 'jetstack', url: 'https://charts.jetstack.io' }
+  become: true
+
+- name: Update Helm repositories for ansible user
+  ansible.builtin.command: helm repo update
+  become: false
+
+- name: Update Helm repositories for root user
+  ansible.builtin.command: helm repo update
+  become: true

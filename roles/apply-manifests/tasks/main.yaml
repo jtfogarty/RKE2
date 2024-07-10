@@ -33,7 +33,7 @@
 # Create namespace so that we can deploy metallb
 - name: Apply MetalLB namespace and resources
   ansible.builtin.command:
-    cmd: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.10/config/manifests/metallb-native.yaml
+    cmd: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/{{ metallb_version }}/config/manifests/metallb-native.yaml
   become_user: "{{ ansible_user }}"
   changed_when: true
   when: inventory_hostname == groups['server_nodes'][0]
@@ -148,9 +148,5 @@
     values:
       hostname: "{{ rancher_hostname }}"
       replicas: 3
-      ingress:
-        tls:
-          source: rancher
-      bootstrapPassword: "{{ rancher_bootstrap_password }}"
   when: inventory_hostname == groups['server_nodes'][0]
   become: true

@@ -113,7 +113,7 @@
     chart_ref: jetstack/cert-manager
     release_namespace: cert-manager
     create_namespace: true
-    version: "{{ cert_manager_version }}"
+    chart_version: "{{ cert_manager_version }}"
     values:
       installCRDs: true
   when: inventory_hostname == groups['server_nodes'][0]

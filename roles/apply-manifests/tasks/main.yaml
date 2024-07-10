@@ -148,5 +148,9 @@
     values:
       hostname: "{{ rancher_hostname }}"
       replicas: 3
+      ingress:
+        tls:
+          source: rancher
+      bootstrapPassword: "{{ rancher_bootstrap_password }}"
   when: inventory_hostname == groups['server_nodes'][0]
   become: true

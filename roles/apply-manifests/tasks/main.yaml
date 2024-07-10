@@ -54,6 +54,7 @@
 # Rancher installation tasks
 - name: Create namespace for Rancher
   kubernetes.core.k8s:
+    kubeconfig: "/etc/rancher/rke2/rke2.yaml"
     state: present
     definition:
       apiVersion: v1
@@ -61,15 +62,19 @@
       metadata:
         name: cattle-system
   when: inventory_hostname == groups['server_nodes'][0]
+  become: true
 
 - name: Install cert-manager CRDs
   kubernetes.core.k8s:
+    kubeconfig: "/etc/rancher/rke2/rke2.yaml"
     state: present
     src: "https://github.com/cert-manager/cert-manager/releases/download/{{ cert_manager_version }}/cert-manager.crds.yaml"
   when: inventory_hostname == groups['server_nodes'][0]
+  become: true
 
 - name: Create cert-manager namespace
   kubernetes.core.k8s:
+    kubeconfig: "/etc/rancher/rke2/rke2.yaml"
     state: present
     definition:
       apiVersion: v1
@@ -77,9 +82,11 @@
       metadata:
         name: cert-manager
   when: inventory_hostname == groups['server_nodes'][0]
+  become: true
 
 - name: Deploy cert-manager
   kubernetes.core.helm:
+    kubeconfig: "/etc/rancher/rke2/rke2.yaml"
     name: cert-manager
     chart_ref: jetstack/cert-manager
     release_namespace: cert-manager
@@ -87,9 +94,11 @@
     values:
       installCRDs: true
   when: inventory_hostname == groups['server_nodes'][0]
+  become: true
 
 - name: Deploy Rancher
   kubernetes.core.helm:
+    kubeconfig: "/etc/rancher/rke2/rke2.yaml"
     name: rancher
     chart_ref: rancher-latest/rancher
     release_namespace: cattle-system
@@ -98,3 +107,4 @@
       hostname: "{{ rancher_hostname }}"
       replicas: 3
   when: inventory_hostname == groups['server_nodes'][0]
+  become: true

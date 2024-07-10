@@ -99,28 +99,6 @@
   when: inventory_hostname == groups['server_nodes'][0]
   become: true
 
-- name: Install cert-manager CRDs
-  kubernetes.core.k8s:
-    kubeconfig: "/home/{{ ansible_user }}/.kube/config"
-    state: present
-    src: "https://github.com/cert-manager/cert-manager/releases/download/{{ cert_manager_version }}/cert-manager.crds.yaml"
-  when: inventory_hostname == groups['server_nodes'][0]
-  become: false
-  environment:
-    KUBECONFIG: /home/{{ ansible_user }}/.kube/config
-
-- name: Create cert-manager namespace
-  kubernetes.core.k8s:
-    kubeconfig: "/etc/rancher/rke2/rke2.yaml"
-    state: present
-    definition:
-      apiVersion: v1
-      kind: Namespace
-      metadata:
-        name: cert-manager
-  when: inventory_hostname == groups['server_nodes'][0]
-  become: true
-
 - name: Add Jetstack Helm repository
   kubernetes.core.helm_repository:
     name: jetstack
@@ -135,6 +113,7 @@
     chart_ref: jetstack/cert-manager
     release_namespace: cert-manager
     create_namespace: true
+    version: "{{ cert_manager_version }}"
     values:
       installCRDs: true
   when: inventory_hostname == groups['server_nodes'][0]

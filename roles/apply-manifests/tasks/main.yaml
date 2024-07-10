@@ -9,18 +9,22 @@
   become_user: "{{ ansible_user }}"
   when: inventory_hostname == groups['server_nodes'][0]
 
-- name: Ensure kubeconfig file exists
-  ansible.builtin.stat:
+- name: Ensure kubeconfig file exists and has correct permissions
+  ansible.builtin.file:
     path: /etc/rancher/rke2/rke2.yaml
-  register: kubeconfig_file
+    state: file
+    mode: '0644'
   when: inventory_hostname == groups['server_nodes'][0]
+  become: true
 
 - name: Fail if kubeconfig file does not exist
   ansible.builtin.fail:
     msg: "Kubeconfig file not found at /etc/rancher/rke2/rke2.yaml"
   when: 
     - inventory_hostname == groups['server_nodes'][0]
-    - not kubeconfig_file.stat.exists
+    - not ansible_stat.exists
+  vars:
+    ansible_stat: "{{ lookup('file', '/etc/rancher/rke2/rke2.yaml') }}"
 
 # Create namespace so that we can deploy metallb
 - name: Apply MetalLB namespace and resources
@@ -78,6 +82,8 @@
   become: true
   environment:
     KUBECONFIG: /etc/rancher/rke2/rke2.yaml
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
 
 - name: Install cert-manager CRDs
   kubernetes.core.k8s:

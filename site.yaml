@@ -106,13 +106,15 @@
         create_namespace: true
         values:
           installCRDs: true
+      become: false
 
     - name: Deploy Rancher
       kubernetes.core.helm:
         name: rancher
-        chart_ref: rancher-latest/rancher
+        chart_ref: rancher-stable/rancher
         release_namespace: cattle-system
         create_namespace: true
         values:
-          hostname: rancher.yourdomain.com
+          hostname: "{{ rancher_hostname }}"
           replicas: 3
+      become: false

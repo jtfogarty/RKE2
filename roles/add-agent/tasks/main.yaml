@@ -21,6 +21,11 @@
     creates: /usr/local/bin/rke2
   become: true
 
+- name: Debug - Display rke2_token in add-agent role
+  ansible.builtin.debug:
+    var: rke2_token
+    verbosity: 2
+
 - name: Deploy RKE2 Agent Configuration
   ansible.builtin.template:
     src: templates/rke2-agent-config.j2
@@ -31,10 +36,6 @@
     force: "{{ overwrite_agent_config | default(false) }}"
   become: true
   when: rke2_token is defined
-
-- name: Debug - Display rke2_token in add-agent role
-  ansible.builtin.debug:
-    var: rke2_token
     verbosity: 2
 
 - name: Create RKE2 agent service file

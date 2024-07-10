@@ -138,6 +138,13 @@
   when: inventory_hostname == groups['server_nodes'][0]
   become: true
 
+- name: Add Rancher Helm repository
+  kubernetes.core.helm_repository:
+    name: rancher-latest
+    repo_url: https://releases.rancher.com/server-charts/latest
+  when: inventory_hostname == groups['server_nodes'][0]
+  become: true
+
 - name: Deploy Rancher
   kubernetes.core.helm:
     kubeconfig: "/etc/rancher/rke2/rke2.yaml"

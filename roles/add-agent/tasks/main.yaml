@@ -28,6 +28,7 @@
     owner: root
     group: root
     mode: '0644'
+    force: "{{ overwrite_agent_config | default(false) }}"
   become: true
   when: rke2_token is defined
 
@@ -43,6 +44,7 @@
     owner: root
     group: root
     mode: '0644'
+    force: no
   become: true
 
 - name: Ensure RKE2 agents are enabled and running

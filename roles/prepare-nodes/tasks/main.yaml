@@ -47,17 +47,22 @@
   ansible.builtin.command: helm repo update
   become: true
 
-- name: Set up NTP
+- name: Install chrony
+  ansible.builtin.package:
+    name: chrony
+    state: present
+
+- name: Set up chrony configuration
   ansible.builtin.template:
-    src: ntp.conf.j2
-    dest: /etc/ntp.conf
+    src: chrony.conf.j2
+    dest: /etc/chrony/chrony.conf
     owner: root
     group: root
     mode: '0644'
-  notify: Restart NTP service
+  notify: Restart chrony service
 
-- name: Ensure NTP service is enabled and started
+- name: Ensure chrony service is enabled and started
   ansible.builtin.service:
-    name: ntp
+    name: chronyd
     state: started
     enabled: yes

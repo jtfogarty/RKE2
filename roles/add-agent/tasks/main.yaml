@@ -21,6 +21,10 @@
     creates: /usr/local/bin/rke2
   become: true
 
+- name: Fetch rke2_token from first server node
+  ansible.builtin.set_fact:
+    rke2_token: "{{ hostvars[groups['server_nodes'][0]]['rke2_token'] }}"
+
 - name: Debug - Display rke2_token in add-agent role
   ansible.builtin.debug:
     var: rke2_token
@@ -28,7 +32,7 @@
 
 - name: Set decoded token fact
   ansible.builtin.set_fact:
-    decoded_rke2_token: "{{ rke2_token | b64decode | trim }}"
+    decoded_rke2_token: "{{ rke2_token }}"
 
 - name: Deploy RKE2 Agent Configuration
   ansible.builtin.template:

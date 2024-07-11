@@ -35,6 +35,11 @@
         var: token_file
         verbosity: 2
 
+- name: Configure RKE2 agent nodes
+  hosts: agent_nodes
+  roles:
+    - add-agent
+
 - name: Create namespace for Rancher
   hosts: server_nodes[0]
   tasks:
@@ -48,11 +53,6 @@
           metadata:
             name: cattle-system
       become: false
-
-- name: Configure RKE2 agent nodes
-  hosts: agent_nodes
-  roles:
-    - add-agent
 
 - name: Install kubernetes Python library
   hosts: server_nodes

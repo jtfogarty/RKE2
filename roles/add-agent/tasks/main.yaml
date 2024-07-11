@@ -67,3 +67,9 @@
     enabled: true
     daemon_reload: yes
   become: true
+
+- name: Restart rke2-agent service
+  ansible.builtin.systemd:
+    name: rke2-agent
+    state: restarted
+  become: true

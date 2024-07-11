@@ -38,4 +38,5 @@ force_rke2_download: false
 overwrite_agent_config: false
 
 # Force reinstallation of components
-force_reinstall_components: false
+force_reinstall_components: true
+metallb_reinstall_components: false

@@ -187,24 +187,32 @@
         kind: Namespace
         state: present
 
-    - name: Deploy Rancher
-      kubernetes.core.helm:
-        kubeconfig: "/etc/rancher/rke2/rke2.yaml"
-        name: rancher
-        chart_ref: rancher-stable/rancher
-        release_namespace: cattle-system
-        create_namespace: true
-        force: true
-        wait: true
-        update_repo_cache: true
-        values:
-          hostname: "{{ rancher_hostname }}"
-          bootstrapPassword: "{{ rancher_bootstrap_password }}"
-      register: rancher_deployment_result
+    - name: Check if Rancher is already installed
+      ansible.builtin.command:
+        cmd: helm list -n cattle-system | grep rancher
+      register: rancher_installed
+      changed_when: false
+      failed_when: false
 
-    - name: Debug Rancher deployment result
+    - name: Uninstall existing Rancher if present
+      ansible.builtin.command:
+        cmd: helm uninstall rancher -n cattle-system
+      when: rancher_installed.rc == 0
+
+    - name: Install Rancher
+      ansible.builtin.command:
+        cmd: >
+          helm install rancher rancher-stable/rancher
+          --namespace cattle-system
+          --create-namespace
+          --set hostname={{ rancher_hostname }}
+          --set bootstrapPassword={{ rancher_bootstrap_password }}
+          --wait
+      register: rancher_install_result
+
+    - name: Debug Rancher installation result
       debug:
-        var: rancher_deployment_result
+        var: rancher_install_result
 
     - name: Wait for Rancher to be ready
       kubernetes.core.k8s_info:

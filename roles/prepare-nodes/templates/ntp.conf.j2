@@ -1,0 +1,13 @@
+# NTP configuration
+pool 0.ubuntu.pool.ntp.org iburst
+pool 1.ubuntu.pool.ntp.org iburst
+pool 2.ubuntu.pool.ntp.org iburst
+pool 3.ubuntu.pool.ntp.org iburst
+
+# Allow only localhost queries by default
+restrict default ignore
+restrict 127.0.0.1
+restrict ::1
+
+# Drift file
+driftfile /var/lib/ntp/ntp.drift

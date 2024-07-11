@@ -46,3 +46,18 @@
 - name: Update Helm repositories for root user
   ansible.builtin.command: helm repo update
   become: true
+
+- name: Set up NTP
+  ansible.builtin.template:
+    src: ntp.conf.j2
+    dest: /etc/ntp.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart NTP service
+
+- name: Ensure NTP service is enabled and started
+  ansible.builtin.service:
+    name: ntp
+    state: started
+    enabled: yes

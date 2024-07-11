@@ -173,6 +173,7 @@
     release_namespace: cert-manager
     create_namespace: true
     force: true
+    atomic: true
     values:
       installCRDs: true
     set:

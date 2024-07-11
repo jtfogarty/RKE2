@@ -166,7 +166,7 @@
     state: present
     src: https://github.com/cert-manager/cert-manager/releases/download/v1.11.0/cert-manager.crds.yaml
   when: inventory_hostname == groups['server_nodes'][0]
-  become: true
+  become: false
 
 - name: Add Jetstack Helm repository
   kubernetes.core.helm_repository:

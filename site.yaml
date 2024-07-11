@@ -56,12 +56,14 @@
         name: kubernetes
         state: present
 
-- name: Apply MetalLB manifests
+- name: Apply manifests (excluding MetalLB)
   hosts: server_nodes
   roles:
-    - apply-manifests
+    - role: apply-manifests
+      vars:
+        skip_metallb: true
   tags:
-    - metallb
+    - manifests
 
 - name: Deploy cert-manager and Rancher
   hosts: server_nodes[0]

@@ -63,9 +63,10 @@
   tags:
     - metallb
 
-- name: Deploy Rancher and related components
+- name: Deploy cert-manager and Rancher
   hosts: server_nodes[0]
   tags:
+    - cert-manager
     - rancher
   tasks:
     - name: Create cert-manager namespace
@@ -82,7 +83,7 @@
       kubernetes.core.k8s:
         kubeconfig: "/etc/rancher/rke2/rke2.yaml"
         state: present
-        src: https://github.com/jetstack/cert-manager/releases/download/v1.6.1/cert-manager.crds.yaml
+        src: "https://github.com/cert-manager/cert-manager/releases/download/{{ cert_manager_version }}/cert-manager.crds.yaml"
 
     - name: Deploy cert-manager
       kubernetes.core.helm:
@@ -107,8 +108,18 @@
         - cert_manager_deployment.resources | length > 0
         - cert_manager_deployment.resources[0].status.readyReplicas is defined
         - cert_manager_deployment.resources[0].status.readyReplicas == cert_manager_deployment.resources[0].spec.replicas
-      retries: 20
+      retries: 30
       delay: 30
+
+    - name: Create cattle-system namespace
+      kubernetes.core.k8s:
+        kubeconfig: "/etc/rancher/rke2/rke2.yaml"
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: cattle-system
 
     - name: Deploy Rancher
       kubernetes.core.helm:
@@ -116,10 +127,13 @@
         name: rancher
         chart_ref: rancher-stable/rancher
         release_namespace: cattle-system
-        create_namespace: true
+        create_namespace: false
+        wait: yes
+        timeout: 600
         set_values:
           hostname: "{{ rancher_hostname }}"
           replicas: "3"
+          bootstrapPassword: "{{ rancher_bootstrap_password }}"
 
     - name: Wait for Rancher to be ready
       kubernetes.core.k8s_info:
@@ -133,5 +147,20 @@
         - rancher_deployment.resources | length > 0
         - rancher_deployment.resources[0].status.readyReplicas is defined
         - rancher_deployment.resources[0].status.readyReplicas == rancher_deployment.resources[0].spec.replicas
-      retries: 20
+      retries: 30
+      delay: 30
+
+    - name: Wait for Rancher webhook to be ready
+      kubernetes.core.k8s_info:
+        kubeconfig: "/etc/rancher/rke2/rke2.yaml"
+        kind: Deployment
+        namespace: cattle-system
+        name: rancher-webhook
+      register: rancher_webhook_deployment
+      until: 
+        - rancher_webhook_deployment.resources is defined
+        - rancher_webhook_deployment.resources | length > 0
+        - rancher_webhook_deployment.resources[0].status.readyReplicas is defined
+        - rancher_webhook_deployment.resources[0].status.readyReplicas == rancher_webhook_deployment.resources[0].spec.replicas
+      retries: 30
       delay: 30

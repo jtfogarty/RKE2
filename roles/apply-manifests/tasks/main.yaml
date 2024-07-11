@@ -90,6 +90,7 @@
   when: inventory_hostname == groups['server_nodes'][0]
 
 # Deploy cert-manager
+# Deploy cert-manager
 - name: Deploy cert-manager
   block:
     - name: Add Jetstack Helm repository
@@ -109,8 +110,8 @@
         values:
           installCRDs: true
         set_values:
-          - name: "webhook.timeoutSeconds"
-            value: "30"
+          webhook.timeoutSeconds: "30"
+      when: inventory_hostname == groups['server_nodes'][0]
 
     - name: Wait for cert-manager to be ready
       kubernetes.core.k8s_info:

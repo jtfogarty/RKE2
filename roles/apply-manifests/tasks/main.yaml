@@ -165,6 +165,31 @@
   when: inventory_hostname == groups['server_nodes'][0]
   become: true
 
+- name: Deploy cert-manager
+  kubernetes.core.helm:
+    kubeconfig: "/etc/rancher/rke2/rke2.yaml"
+    name: cert-manager
+    chart_ref: jetstack/cert-manager
+    release_namespace: cert-manager
+    create_namespace: true
+    values:
+      installCRDs: true
+  when: inventory_hostname == groups['server_nodes'][0]
+  become: true
+
+- name: Wait for cert-manager to be ready
+  kubernetes.core.k8s_info:
+    kubeconfig: "/etc/rancher/rke2/rke2.yaml"
+    kind: Deployment
+    namespace: cert-manager
+    name: cert-manager
+  register: cert_manager_deployment
+  until: cert_manager_deployment.resources[0].status.readyReplicas is defined and cert_manager_deployment.resources[0].status.readyReplicas == cert_manager_deployment.resources[0].spec.replicas
+  retries: 20
+  delay: 30
+  when: inventory_hostname == groups['server_nodes'][0]
+  become: true
+
 - name: Deploy Rancher
   kubernetes.core.helm:
     kubeconfig: "/etc/rancher/rke2/rke2.yaml"

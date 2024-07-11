@@ -160,13 +160,23 @@
   when: inventory_hostname == groups['server_nodes'][0]
   become: true
 
+- name: Ensure kubeconfig file exists and has correct permissions
+  ansible.builtin.file:
+    path: /etc/rancher/rke2/rke2.yaml
+    state: file
+    mode: '0644'
+  when: inventory_hostname == groups['server_nodes'][0]
+  become: true
+
 - name: Install cert-manager CRDs
   kubernetes.core.k8s:
     kubeconfig: "/etc/rancher/rke2/rke2.yaml"
     state: present
     src: https://github.com/cert-manager/cert-manager/releases/download/v1.11.0/cert-manager.crds.yaml
   when: inventory_hostname == groups['server_nodes'][0]
-  become: false
+  become: true
+  environment:
+    KUBECONFIG: /etc/rancher/rke2/rke2.yaml
 
 - name: Add Jetstack Helm repository
   kubernetes.core.helm_repository:

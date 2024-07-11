@@ -77,9 +77,13 @@
   hosts: server_nodes
   roles:
     - apply-manifests
+  tags:
+    - metallb
 
 - name: Deploy Rancher
   hosts: server_nodes
+  tags:
+    - rancher
   tasks:
 
     - name: Install cert-manager CRDs

@@ -153,6 +153,7 @@
         chart_ref: rancher-stable/rancher
         release_namespace: cattle-system
         create_namespace: true
+        force: true
         values:
           hostname: "{{ rancher_hostname }}"
           bootstrapPassword: "{{ rancher_bootstrap_password }}"
@@ -167,3 +168,4 @@
       until: rancher_deployment.resources[0].status.readyReplicas is defined and rancher_deployment.resources[0].status.readyReplicas == rancher_deployment.resources[0].spec.replicas
       retries: 20
       delay: 30
+  when: inventory_hostname == groups['server_nodes'][0]

@@ -51,9 +51,11 @@
       ansible.builtin.command:
         cmd: kubectl delete -f https://raw.githubusercontent.com/metallb/metallb/{{ metallb_version }}/config/manifests/metallb-native.yaml
       ignore_errors: true
+      when: 
+        - metallb_reinstall_components | bool
   when: 
     - inventory_hostname == groups['server_nodes'][0]
-    - metallb_reinstall_components | bool
+    
 
 # Deploy MetalLB
 - name: Deploy MetalLB and configure IP pool

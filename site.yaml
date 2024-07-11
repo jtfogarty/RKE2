@@ -122,14 +122,14 @@
             name: cattle-system
 
     - name: Deploy Rancher
-      kubernetes.core.helm_release:
+      kubernetes.core.helm:
         kubeconfig: "/etc/rancher/rke2/rke2.yaml"
         name: rancher
         chart_ref: rancher-stable/rancher
         release_namespace: cattle-system
         create_namespace: false
         wait: yes
-        wait_timeout: 600
+        timeout: 600
         force: true
         values:
           hostname: "{{ rancher_hostname }}"

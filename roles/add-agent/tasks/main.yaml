@@ -26,6 +26,10 @@
     var: rke2_token
     verbosity: 2
 
+- name: Set decoded token fact
+  ansible.builtin.set_fact:
+    decoded_rke2_token: "{{ rke2_token | b64decode | trim }}"
+
 - name: Deploy RKE2 Agent Configuration
   ansible.builtin.template:
     src: templates/rke2-agent-config.j2

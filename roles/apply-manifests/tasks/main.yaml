@@ -53,7 +53,7 @@
       ignore_errors: true
   when: 
     - inventory_hostname == groups['server_nodes'][0]
-    - force_reinstall_components | bool
+    - metallb_reinstall_components | bool
 
 # Deploy MetalLB
 - name: Deploy MetalLB and configure IP pool

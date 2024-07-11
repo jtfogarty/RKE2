@@ -190,12 +190,12 @@
     - name: Force remove existing Rancher release
       ansible.builtin.command:
         cmd: helm delete rancher -n cattle-system --no-hooks
-      ignore_errors: yes
+      ignore_errors: true
 
     - name: Remove Rancher release from Helm storage
       ansible.builtin.command:
         cmd: kubectl delete secret -n cattle-system -l name=rancher,owner=helm
-      ignore_errors: yes
+      ignore_errors: true
 
     - name: Install Rancher
       ansible.builtin.command:

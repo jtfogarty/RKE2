@@ -42,20 +42,6 @@
   roles:
     - add-agent
 
-- name: Create namespace for Rancher
-  hosts: server_nodes[0]
-  tasks:
-    - name: Create namespace for Rancher
-      kubernetes.core.k8s:
-        kubeconfig: "/etc/rancher/rke2/rke2.yaml"
-        state: present
-        definition:
-          apiVersion: v1
-          kind: Namespace
-          metadata:
-            name: cattle-system
-      become: false
-
 - name: Install kubernetes Python library
   hosts: server_nodes
   become: true
@@ -70,11 +56,6 @@
         name: kubernetes
         state: present
 
-#- name: Apply kube-vip (skip if using pfSense VIP)
-#  hosts: server_nodes
-#  roles:
-#    - kube-vip
-
 - name: Apply MetalLB manifests
   hosts: server_nodes
   roles:
@@ -82,32 +63,30 @@
   tags:
     - metallb
 
-- name: Deploy Rancher
-  hosts: server_nodes
+- name: Deploy Rancher and related components
+  hosts: server_nodes[0]
   tags:
     - rancher
   tasks:
-
-    - name: Install cert-manager CRDs
-      kubernetes.core.k8s:
-        state: present
-        src: https://github.com/jetstack/cert-manager/releases/download/v1.6.1/cert-manager.crds.yaml
-      tags:
-        - cert-manager
-
     - name: Create cert-manager namespace
       kubernetes.core.k8s:
+        kubeconfig: "/etc/rancher/rke2/rke2.yaml"
         state: present
         definition:
           apiVersion: v1
           kind: Namespace
           metadata:
             name: cert-manager
-      tags:
-        - cert-manager
+
+    - name: Install cert-manager CRDs
+      kubernetes.core.k8s:
+        kubeconfig: "/etc/rancher/rke2/rke2.yaml"
+        state: present
+        src: https://github.com/jetstack/cert-manager/releases/download/v1.6.1/cert-manager.crds.yaml
 
     - name: Deploy cert-manager
       kubernetes.core.helm:
+        kubeconfig: "/etc/rancher/rke2/rke2.yaml"
         name: cert-manager
         chart_ref: jetstack/cert-manager
         chart_version: "{{ cert_manager_version }}"
@@ -115,12 +94,25 @@
         create_namespace: true
         values:
           installCRDs: true
-      become: false
-      tags:
-        - cert-manager
+
+    - name: Wait for cert-manager to be ready
+      kubernetes.core.k8s_info:
+        kubeconfig: "/etc/rancher/rke2/rke2.yaml"
+        kind: Deployment
+        namespace: cert-manager
+        name: cert-manager
+      register: cert_manager_deployment
+      until: 
+        - cert_manager_deployment.resources is defined
+        - cert_manager_deployment.resources | length > 0
+        - cert_manager_deployment.resources[0].status.readyReplicas is defined
+        - cert_manager_deployment.resources[0].status.readyReplicas == cert_manager_deployment.resources[0].spec.replicas
+      retries: 20
+      delay: 30
 
     - name: Deploy Rancher
       kubernetes.core.helm:
+        kubeconfig: "/etc/rancher/rke2/rke2.yaml"
         name: rancher
         chart_ref: rancher-stable/rancher
         release_namespace: cattle-system
@@ -128,4 +120,18 @@
         set_values:
           hostname: "{{ rancher_hostname }}"
           replicas: "3"
-      become: false
+
+    - name: Wait for Rancher to be ready
+      kubernetes.core.k8s_info:
+        kubeconfig: "/etc/rancher/rke2/rke2.yaml"
+        kind: Deployment
+        namespace: cattle-system
+        name: rancher
+      register: rancher_deployment
+      until: 
+        - rancher_deployment.resources is defined
+        - rancher_deployment.resources | length > 0
+        - rancher_deployment.resources[0].status.readyReplicas is defined
+        - rancher_deployment.resources[0].status.readyReplicas == rancher_deployment.resources[0].spec.replicas
+      retries: 20
+      delay: 30

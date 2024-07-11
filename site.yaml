@@ -24,7 +24,6 @@
     - name: Debug - Display token
       ansible.builtin.debug:
         var: rke2_token
-        verbosity: 2
 
     - name: Debug - Check token file
       ansible.builtin.stat:

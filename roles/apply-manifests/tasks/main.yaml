@@ -109,8 +109,8 @@
         atomic: true
         values:
           installCRDs: true
-        set_values:
-          - "webhook.timeoutSeconds=30"
+          webhook:
+            timeoutSeconds: 30
       when: inventory_hostname == groups['server_nodes'][0]
 
     - name: Wait for cert-manager to be ready

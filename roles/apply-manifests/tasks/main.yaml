@@ -175,33 +175,6 @@
   when: inventory_hostname == groups['server_nodes'][0]
   become: true
 
-- name: Deploy cert-manager
-  kubernetes.core.helm:
-    kubeconfig: "/etc/rancher/rke2/rke2.yaml"
-    name: cert-manager
-    chart_ref: jetstack/cert-manager
-    chart_version: "{{ cert_manager_version }}"
-    release_namespace: cert-manager
-    create_namespace: true
-    values:
-      installCRDs: true
-  when: inventory_hostname == groups['server_nodes'][0]
-  become: true
-
-- name: Wait for cert-manager to be ready
-  kubernetes.core.k8s_info:
-    kubeconfig: "/etc/rancher/rke2/rke2.yaml"
-    kind: Pod
-    namespace: cert-manager
-    label_selectors:
-      - app=cert-manager
-  register: cert_manager_pods
-  until: cert_manager_pods.resources | length > 0 and (cert_manager_pods.resources | map(attribute='status.phase') | list | unique == ['Running'])
-  retries: 10
-  delay: 30
-  when: inventory_hostname == groups['server_nodes'][0]
-  become: true
-
 - name: Deploy Rancher
   kubernetes.core.helm:
     kubeconfig: "/etc/rancher/rke2/rke2.yaml"

@@ -111,8 +111,6 @@
         create_namespace: true
         values:
           installCRDs: true
-        set_values:
-          webhook.timeoutSeconds: "30"
 
     - name: Wait for cert-manager to be ready
       kubernetes.core.k8s_info:

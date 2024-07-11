@@ -34,10 +34,11 @@
 - name: Remove existing components
   block:
     - name: Check for Rancher in all namespaces
-      ansible.builtin.command:
+      ansible.builtin.shell:
         cmd: helm list --all-namespaces | grep rancher
       register: helm_list_all
       changed_when: false
+      failed_when: false 
 
     - name: Debug Helm list all output
       debug:

@@ -90,6 +90,8 @@
       kubernetes.core.k8s:
         state: present
         src: https://github.com/jetstack/cert-manager/releases/download/v1.6.1/cert-manager.crds.yaml
+      tags:
+        - cert-manager
 
     - name: Create cert-manager namespace
       kubernetes.core.k8s:
@@ -99,6 +101,8 @@
           kind: Namespace
           metadata:
             name: cert-manager
+      tags:
+        - cert-manager
 
     - name: Deploy cert-manager
       kubernetes.core.helm:
@@ -110,6 +114,8 @@
         values:
           installCRDs: true
       become: false
+      tags:
+        - cert-manager
 
     - name: Deploy Rancher
       kubernetes.core.helm:

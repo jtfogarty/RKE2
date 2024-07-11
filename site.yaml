@@ -122,17 +122,18 @@
             name: cattle-system
 
     - name: Deploy Rancher
-      kubernetes.core.helm:
+      kubernetes.core.helm_release:
         kubeconfig: "/etc/rancher/rke2/rke2.yaml"
         name: rancher
         chart_ref: rancher-stable/rancher
         release_namespace: cattle-system
         create_namespace: false
         wait: yes
-        timeout: 600
-        set_values:
+        wait_timeout: 600
+        force: true
+        values:
           hostname: "{{ rancher_hostname }}"
-          replicas: "3"
+          replicas: 3
           bootstrapPassword: "{{ rancher_bootstrap_password }}"
 
     - name: Wait for Rancher to be ready

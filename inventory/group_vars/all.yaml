@@ -29,7 +29,7 @@ cert_manager_version: "v1.13.3"
 
 # Rancher configuration
 rancher_hostname: "rancher.documentresearch.dev"
-rancher_bootstrap_password: "your-secure-password-here"
+rancher_bootstrap_password: "hello kitty"
 
 #force download of rke binary
 force_rke2_download: false

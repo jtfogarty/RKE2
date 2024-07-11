@@ -121,6 +121,13 @@
           metadata:
             name: cattle-system
 
+    - name: Check if Rancher release exists
+      kubernetes.core.helm_info:
+        kubeconfig: "/etc/rancher/rke2/rke2.yaml"
+        name: rancher
+        release_namespace: cattle-system
+      register: rancher_release_info
+
     - name: Deploy Rancher
       kubernetes.core.helm:
         kubeconfig: "/etc/rancher/rke2/rke2.yaml"
@@ -131,6 +138,7 @@
         wait: yes
         timeout: 600
         force: true
+        state: "{{ 'present' if rancher_release_info.status is defined else 'absent' }}"
         values:
           hostname: "{{ rancher_hostname }}"
           replicas: 3

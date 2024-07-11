@@ -119,7 +119,11 @@
         namespace: cert-manager
         name: cert-manager
       register: cert_manager_deployment
-      until: cert_manager_deployment.resources[0].status.readyReplicas is defined and cert_manager_deployment.resources[0].status.readyReplicas == cert_manager_deployment.resources[0].spec.replicas
+      until: 
+        - cert_manager_deployment.resources is defined
+        - cert_manager_deployment.resources | length > 0
+        - cert_manager_deployment.resources[0].status.readyReplicas is defined
+        - cert_manager_deployment.resources[0].status.readyReplicas == cert_manager_deployment.resources[0].spec.replicas
       retries: 20
       delay: 30
   when: inventory_hostname == groups['server_nodes'][0]

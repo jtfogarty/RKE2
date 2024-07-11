@@ -29,6 +29,7 @@
   ansible.builtin.debug:
     var: rke2_token
     verbosity: 2
+  failed_when: rke2_token is not defined
 
 - name: Set decoded token fact
   ansible.builtin.set_fact:

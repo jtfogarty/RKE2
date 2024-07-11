@@ -24,6 +24,7 @@
     - name: Debug - Display token
       ansible.builtin.debug:
         var: rke2_token
+      failed_when: rke2_token is not defined
 
     - name: Debug - Check token file
       ansible.builtin.stat:
@@ -34,6 +35,7 @@
       ansible.builtin.debug:
         var: token_file
         verbosity: 2
+      failed_when: not token_file.stat.exists
 
 - name: Configure RKE2 agent nodes
   hosts: agent_nodes

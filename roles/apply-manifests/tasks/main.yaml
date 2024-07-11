@@ -187,17 +187,15 @@
         kind: Namespace
         state: present
 
-    - name: Check if Rancher is already installed
+    - name: Force remove existing Rancher release
       ansible.builtin.command:
-        cmd: helm list -n cattle-system | grep rancher
-      register: rancher_installed
-      changed_when: false
-      failed_when: false
+        cmd: helm delete rancher -n cattle-system --no-hooks
+      ignore_errors: yes
 
-    - name: Uninstall existing Rancher if present
+    - name: Remove Rancher release from Helm storage
       ansible.builtin.command:
-        cmd: helm uninstall rancher -n cattle-system
-      when: rancher_installed.rc == 0
+        cmd: kubectl delete secret -n cattle-system -l name=rancher,owner=helm
+      ignore_errors: yes
 
     - name: Install Rancher
       ansible.builtin.command:

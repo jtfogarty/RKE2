@@ -33,12 +33,49 @@
 # Remove existing components if force_reinstall_components is true
 - name: Remove existing components
   block:
+    - name: Check for Rancher in all namespaces
+      ansible.builtin.command:
+        cmd: helm list --all-namespaces | grep rancher
+      register: helm_list_all
+      changed_when: false
+
+    - name: Debug Helm list all output
+      debug:
+        var: helm_list_all
+
+    - name: Remove rancher-provisioning-capi
+      kubernetes.core.helm:
+        kubeconfig: "/etc/rancher/rke2/rke2.yaml"
+        name: rancher-provisioning-capi
+        release_namespace: cattle-provisioning-capi-system
+        state: absent
+      when: "'rancher-provisioning-capi' in helm_list_all.stdout"
+
+    - name: Remove rancher-webhook
+      kubernetes.core.helm:
+        kubeconfig: "/etc/rancher/rke2/rke2.yaml"
+        name: rancher-webhook
+        release_namespace: cattle-system
+        state: absent
+      when: "'rancher-webhook' in helm_list_all.stdout"
+
     - name: Remove Rancher
       kubernetes.core.helm:
         kubeconfig: "/etc/rancher/rke2/rke2.yaml"
         name: rancher
         release_namespace: cattle-system
         state: absent
+
+    - name: Check for remaining Rancher resources
+      ansible.builtin.command:
+        cmd: kubectl get all,ingress,secrets -l app=rancher -A
+      register: rancher_resources
+      changed_when: false
+
+    - name: Remove remaining Rancher resources
+      ansible.builtin.command:
+        cmd: kubectl delete all,ingress,secrets -l app=rancher -A
+      when: rancher_resources.stdout != ""
 
     - name: Remove cert-manager
       kubernetes.core.helm:
@@ -51,10 +88,11 @@
       ansible.builtin.command:
         cmd: kubectl delete -f https://raw.githubusercontent.com/metallb/metallb/{{ metallb_version }}/config/manifests/metallb-native.yaml
       ignore_errors: true
-      when: 
-        - metallb_reinstall_components | bool
+      when: metallb_reinstall_components | bool
+
   when: 
     - inventory_hostname == groups['server_nodes'][0]
+    - force_reinstall_components | bool
     
 
 # Deploy MetalLB

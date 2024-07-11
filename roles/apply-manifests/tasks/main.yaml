@@ -88,7 +88,7 @@
 
 - name: Temporarily disable Rancher webhook
   kubernetes.core.k8s:
-    kubeconfig: "/home/{{ ansible_user }}/ippool.yaml"
+    kubeconfig: "/home/{{ ansible_user }}/.kube/config"
     state: patched
     kind: ValidatingWebhookConfiguration
     name: rancher.cattle.io

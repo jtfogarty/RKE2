@@ -121,7 +121,6 @@
           metadata:
             name: cattle-system
 
-
     - name: Check if Rancher release exists
       kubernetes.core.helm_info:
         kubeconfig: "/etc/rancher/rke2/rke2.yaml"

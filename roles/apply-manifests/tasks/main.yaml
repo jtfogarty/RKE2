@@ -195,9 +195,16 @@
         release_namespace: cattle-system
         create_namespace: true
         force: true
+        wait: true
+        update_repo_cache: true
         values:
           hostname: "{{ rancher_hostname }}"
           bootstrapPassword: "{{ rancher_bootstrap_password }}"
+      register: rancher_deployment_result
+
+    - name: Debug Rancher deployment result
+      debug:
+        var: rancher_deployment_result
 
     - name: Wait for Rancher to be ready
       kubernetes.core.k8s_info:

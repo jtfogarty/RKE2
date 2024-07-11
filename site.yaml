@@ -125,7 +125,7 @@
         chart_ref: rancher-stable/rancher
         release_namespace: cattle-system
         create_namespace: true
-        values:
+        set_values:
           hostname: "{{ rancher_hostname }}"
-          replicas: 3
+          replicas: "3"
       become: false

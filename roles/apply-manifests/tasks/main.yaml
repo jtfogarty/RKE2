@@ -108,7 +108,7 @@
         atomic: true
         values:
           installCRDs: true
-        set:
+        set_values:
           - name: "webhook.timeoutSeconds"
             value: "30"
 

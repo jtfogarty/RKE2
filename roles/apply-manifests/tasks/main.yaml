@@ -172,8 +172,12 @@
     chart_ref: jetstack/cert-manager
     release_namespace: cert-manager
     create_namespace: true
+    force: true
     values:
       installCRDs: true
+    set:
+      - name: "webhook.timeoutSeconds"
+        value: "30"
   when: inventory_hostname == groups['server_nodes'][0]
   become: true
 

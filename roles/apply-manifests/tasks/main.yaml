@@ -172,7 +172,7 @@
         create_namespace: true
         chart_version: v1.13.3
         wait: true
-        wait_timeout: 600
+        wait_timeout: 600s
         values:
           installCRDs: true
           webhook:

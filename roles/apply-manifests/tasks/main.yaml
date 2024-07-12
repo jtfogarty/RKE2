@@ -133,25 +133,22 @@
 # Deploy cert-manager
 - name: Deploy cert-manager
   block:
-    - name: Check if cert-manager is installed
-      ansible.builtin.command:
-        cmd: helm list -n cert-manager | grep cert-manager
-      register: cert_manager_check
-      changed_when: false
-      failed_when: false
-
-    - name: Force remove cert-manager if installed
-      ansible.builtin.command:
-        cmd: helm uninstall cert-manager -n cert-manager --no-hooks
-      when: cert_manager_check.rc == 0
-      ignore_errors: true
-
-    - name: Remove cert-manager namespace
-      kubernetes.core.k8s:
+    - name: Check cert-manager namespace status
+      kubernetes.core.k8s_info:
         kind: Namespace
         name: cert-manager
-        state: absent
+      register: cert_manager_ns
       ignore_errors: true
+
+    - name: Wait for cert-manager namespace to be fully deleted
+      kubernetes.core.k8s_info:
+        kind: Namespace
+        name: cert-manager
+      register: cert_manager_ns_check
+      until: cert_manager_ns_check.resources | length == 0
+      retries: 30
+      delay: 10
+      when: cert_manager_ns.resources is defined and cert_manager_ns.resources | length > 0
 
     - name: Remove cert-manager CRDs
       kubernetes.core.k8s:
@@ -167,10 +164,6 @@
         - orders.acme.cert-manager.io
       ignore_errors: true
 
-    - name: Wait for resources to be cleaned up
-      ansible.builtin.pause:
-        seconds: 30
-
     - name: Install cert-manager
       kubernetes.core.helm:
         name: cert-manager
@@ -178,6 +171,8 @@
         release_namespace: cert-manager
         create_namespace: true
         chart_version: v1.13.3
+        wait: true
+        wait_timeout: 600
         values:
           installCRDs: true
           webhook:

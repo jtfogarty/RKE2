@@ -6,7 +6,7 @@
 *.retry
 
 ansible.cfg  # If you prefer to not version control this file
-
+Ansible-output.txt
 # Python
 __pycache__/
 *.py[cod]

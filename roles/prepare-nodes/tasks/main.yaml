@@ -14,38 +14,41 @@
     reload: true
   tags: sysctl
 
-- name: Install Helm
-  ansible.builtin.get_url:
-    url: https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-    dest: /tmp/get_helm.sh
-    mode: '0700'
+- name: Install and configure Helm
+  block:
+    - name: Install Helm
+      ansible.builtin.get_url:
+        url: https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+        dest: /tmp/get_helm.sh
+        mode: '0700'
 
-- name: Execute Helm installation script
-  ansible.builtin.command: /tmp/get_helm.sh
-  args:
-    creates: /usr/local/bin/helm
+    - name: Execute Helm installation script
+      ansible.builtin.command: /tmp/get_helm.sh
+      args:
+        creates: /usr/local/bin/helm
 
-- name: Add Helm repositories for ansible user
-  ansible.builtin.command: "helm repo add {{ item.name }} {{ item.url }}"
-  loop:
-    - { name: 'rancher-stable', url: 'https://releases.rancher.com/server-charts/stable' }
-    - { name: 'jetstack', url: 'https://charts.jetstack.io' }
-  become: false
+    - name: Add Helm repositories for ansible user
+      ansible.builtin.command: "helm repo add {{ item.name }} {{ item.url }}"
+      loop:
+        - { name: 'rancher-stable', url: 'https://releases.rancher.com/server-charts/stable' }
+        - { name: 'jetstack', url: 'https://charts.jetstack.io' }
+      become: false
 
-- name: Add Helm repositories for root user
-  ansible.builtin.command: "helm repo add {{ item.name }} {{ item.url }}"
-  loop:
-    - { name: 'rancher-stable', url: 'https://releases.rancher.com/server-charts/stable' }
-    - { name: 'jetstack', url: 'https://charts.jetstack.io' }
-  become: true
+    - name: Add Helm repositories for root user
+      ansible.builtin.command: "helm repo add {{ item.name }} {{ item.url }}"
+      loop:
+        - { name: 'rancher-stable', url: 'https://releases.rancher.com/server-charts/stable' }
+        - { name: 'jetstack', url: 'https://charts.jetstack.io' }
+      become: true
 
-- name: Update Helm repositories for ansible user
-  ansible.builtin.command: helm repo update
-  become: false
+    - name: Update Helm repositories for ansible user
+      ansible.builtin.command: helm repo update
+      become: false
 
-- name: Update Helm repositories for root user
-  ansible.builtin.command: helm repo update
-  become: true
+    - name: Update Helm repositories for root user
+      ansible.builtin.command: helm repo update
+      become: true
+  when: inventory_hostname in groups['server_nodes']
 
 - name: Install chrony
   ansible.builtin.package:

@@ -1,0 +1,67 @@
+---
+- name: Rancher Health Check
+  hosts: all
+  become: yes
+  tasks:
+    - name: Check open ports
+      shell: ss -tuln
+      register: open_ports
+
+    - name: Check for port 32809
+      shell: ss -tuln | grep :32809
+      register: port_32809
+      ignore_errors: yes
+
+    - name: Check firewall status
+      shell: systemctl status firewalld || systemctl status ufw
+      register: firewall_status
+      ignore_errors: yes
+
+    - name: Check CNI plugin status
+      shell: kubectl get pods -n kube-system | grep -E 'calico|flannel|weave|canal'
+      register: cni_status
+      ignore_errors: yes
+      when: inventory_hostname in groups['server_nodes']
+
+    - name: Ping other nodes
+      shell: "{% for host in groups['all'] %}ping -c 1 {{ hostvars[host]['ansible_host'] }}; {% endfor %}"
+      register: ping_results
+      ignore_errors: yes
+
+    - name: Collect results
+      set_fact:
+        node_results:
+          open_ports: "{{ open_ports.stdout_lines }}"
+          port_32809: "{{ 'In use' if port_32809.rc == 0 else 'Not in use' }}"
+          firewall_status: "{{ firewall_status.stdout_lines }}"
+          cni_status: "{{ cni_status.stdout_lines | default('N/A') }}"
+          ping_results: "{{ ping_results.stdout_lines }}"
+
+    - name: Display results
+      debug:
+        var: node_results
+
+- name: Collect Kubernetes-specific information
+  hosts: server_nodes[0]
+  tasks:
+    - name: Check Rancher pods
+      shell: kubectl get pods -n cattle-system
+      register: rancher_pods
+
+    - name: Check UI plugin resources
+      shell: |
+        kubectl get crd | grep ui-plugin
+        kubectl get ui-plugin -A
+      register: ui_plugin_resources
+      ignore_errors: yes
+
+    - name: Check Rancher logs
+      shell: kubectl logs -n cattle-system -l app=rancher --tail=1000 | grep -i error
+      register: rancher_logs
+
+    - name: Display Kubernetes results
+      debug:
+        msg:
+          - "Rancher pods: {{ rancher_pods.stdout_lines }}"
+          - "UI plugin resources: {{ ui_plugin_resources.stdout_lines }}"
+          - "Rancher logs (errors): {{ rancher_logs.stdout_lines }}"

@@ -128,7 +128,7 @@
       environment:
         KUBECONFIG: /home/{{ ansible_user }}/.kube/config
   become_user: "{{ ansible_user }}"
-  when: inventory_hostname == groups['server_nodes'][0]
+  when: false #inventory_hostname == groups['server_nodes'][0]
 
 # Deploy cert-manager
 - name: Deploy cert-manager
@@ -243,6 +243,8 @@
           --create-namespace
           --set hostname={{ rancher_hostname }}
           --set bootstrapPassword={{ rancher_bootstrap_password }}
+          --set "extraEnv[0].name=CATTLE_UI_PLUGIN_SYSTEM"
+          --set "extraEnv[0].value=true"
           --wait
       register: rancher_install_result
 

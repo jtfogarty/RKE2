@@ -1,0 +1,86 @@
+---
+- name: Uninstall RKE2
+  hosts: all
+  become: yes
+  tasks:
+    - name: Get uptime
+      shell: uptime -p
+      register: uptime_result
+
+    - name: Display uptime
+      debug:
+        msg: "{{ inventory_hostname }} has been up {{ uptime_result.stdout }}"
+
+    - name: Stop RKE2 services
+      systemd:
+        name: "{{ item }}"
+        state: stopped
+      loop:
+        - rke2-server
+        - rke2-agent
+      ignore_errors: yes
+
+    - name: Disable RKE2 services
+      systemd:
+        name: "{{ item }}"
+        enabled: no
+      loop:
+        - rke2-server
+        - rke2-agent
+      ignore_errors: yes
+
+    - name: Remove RKE2 files and directories
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /etc/cni
+        - /var/lib/cni
+        - /var/log/calico
+        - /etc/rancher
+        - /var/lib/rancher
+        - /var/lib/kubelet
+        - /etc/kubernetes
+        - /var/run/k3s
+        - /run/k3s
+
+    - name: Remove RKE2 binaries
+      file:
+        path: /usr/local/bin/rke2*
+        state: absent
+
+    - name: Remove kubeconfig
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /etc/rancher/rke2/rke2.yaml
+        - ~/.kube/config
+
+    - name: Remove systemd drop-in files
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /etc/systemd/system/rke2-server.service.d
+        - /etc/systemd/system/rke2-agent.service.d
+
+    - name: Reload systemd
+      systemd:
+        daemon_reload: yes
+
+    - name: Remove log files in /var/log
+      ansible.builtin.find:
+        paths: /var/log
+        patterns: 
+          - '*.log'
+          - '*.log.*'
+        recurse: yes
+      register: log_files
+
+    - name: Delete found log files
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      loop: "{{ log_files.files }}"
+      become: yes        

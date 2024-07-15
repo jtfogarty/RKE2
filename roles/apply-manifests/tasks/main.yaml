@@ -128,7 +128,7 @@
       environment:
         KUBECONFIG: /home/{{ ansible_user }}/.kube/config
   become_user: "{{ ansible_user }}"
-  when: inventory_hostname == groups['server_nodes'][0]
+  when: false #inventory_hostname == groups['server_nodes'][0]
 
 # Deploy cert-manager
 - name: Deploy cert-manager

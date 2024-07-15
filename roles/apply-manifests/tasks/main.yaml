@@ -243,6 +243,8 @@
           --create-namespace
           --set hostname={{ rancher_hostname }}
           --set bootstrapPassword={{ rancher_bootstrap_password }}
+          --set "extraEnv[0].name=CATTLE_UI_PLUGIN_SYSTEM"
+          --set "extraEnv[0].value=true"
           --wait
       register: rancher_install_result
 

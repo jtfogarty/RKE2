@@ -122,4 +122,4 @@ For a complete list and detailed explanations, refer to the `all.yaml` file dire
 
 ## Troubleshooting
 
-For common issues and their solutions, please refer to the [Troubleshooting Guide](troubleshooting.md).
+For common issues and their solutions, please refer to the [Troubleshooting Guide](troubleshooting/troubleshooting.md).

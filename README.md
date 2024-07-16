@@ -103,3 +103,23 @@ Each role has its own README file with detailed information about its tasks and 
 This playbook provides a comprehensive setup for an RKE2 cluster with Rancher management. It's designed to work with pfSense for load balancing but can be customized based on specific deployment needs.
 
 For detailed information about each role, please refer to the linked README files above.
+
+## Variables in inventory/group_vars/all.yaml
+
+The `all.yaml` file contains important variables used throughout the playbook. Here's a breakdown of key variables:
+
+- `os` and `arch`: Specify the operating system and architecture.
+- `ansible_ssh_private_key_file`: Path to the SSH private key for authentication.
+- `ansible_python_interpreter`: Path to the Python interpreter on the remote hosts.
+- `vip_interface` and `vip`: Network interface and IP for the Virtual IP.
+- `metallb_version` and `lb_range`: Version and IP range for MetalLB.
+- `rke2_version` and `rke2_install_dir`: Version and installation directory for RKE2.
+- `cluster_cidr` and `service_cidr`: CIDR ranges for the Kubernetes cluster and services.
+- `cert_manager_version`: Version of cert-manager to install.
+- `rancher_hostname` and `rancher_bootstrap_password`: Hostname and initial password for Rancher.
+
+For a complete list and detailed explanations, refer to the `all.yaml` file directly.
+
+## Troubleshooting
+
+For common issues and their solutions, please refer to the [Troubleshooting Guide](troubleshooting.md).

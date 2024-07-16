@@ -28,8 +28,11 @@
         server: nas3e8d86
         path: /share/NFSv=4/k8s-storage
       storageClass:
-        name: nfs-client
+        name: nfs-client-new
         defaultClass: true
+    set_values:
+      - name: storageClass.reclaimPolicy
+        value: Delete
   when: inventory_hostname == groups['server_nodes'][0]
   tags: 
     - addNFS

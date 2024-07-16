@@ -26,7 +26,7 @@
     values:
       nfs:
         server: nas3e8d86
-        path: /k8s-storage_Vol/k8s-storage
+        path: /share/NFSv=4/k8s-storage
       storageClass:
         name: nfs-client
         defaultClass: true

@@ -8,40 +8,36 @@ The main tasks performed by this role (as defined in `tasks/main.yaml`) are:
 
 1. Enable IPv4 forwarding
 2. Enable IPv6 forwarding
+3. Install and configure Helm (on server nodes only)
+4. Install and configure Chrony for time synchronization
+5. Install nfs-common package
 
 ## Usage
 
 This role should be applied to all nodes in the cluster (both servers and agents) as part of the initial setup process.
 
+## Tags
+
+- `sysctl`: Used for tasks related to system control settings (IPv4 and IPv6 forwarding)
+- `addNFS`: Used for tasks related to NFS setup
+
 ## Task Details
 
-### Enable IPv4 forwarding
+### Enable IPv4 and IPv6 forwarding
 
-```yaml
-- name: Enable IPv4 forwarding
-  ansible.posix.sysctl:
-    name: net.ipv4.ip_forward
-    value: "1"
-    state: present
-    reload: true
-  tags: sysctl
-```
+These tasks enable IP forwarding, which is necessary for Kubernetes networking to function correctly.
 
-This task enables IPv4 forwarding, which is necessary for Kubernetes networking to function correctly.
+### Install and configure Helm
 
-### Enable IPv6 forwarding
+This task is only performed on server nodes. It installs Helm and adds necessary repositories.
 
-```yaml
-- name: Enable IPv6 forwarding
-  ansible.posix.sysctl:
-    name: net.ipv6.conf.all.forwarding
-    value: "1"
-    state: present
-    reload: true
-  tags: sysctl
-```
+### Install and configure Chrony
 
-This task enables IPv6 forwarding. While not all clusters use IPv6, enabling it ensures compatibility if IPv6 is used in the future.
+Sets up Chrony for time synchronization across all nodes.
+
+### Install nfs-common
+
+Installs the nfs-common package, which is necessary for NFS functionality.
 
 ## Dependencies
 
@@ -49,9 +45,9 @@ This task enables IPv6 forwarding. While not all clusters use IPv6, enabling it 
 
 ## Notes
 
-- These configurations are persistent across reboots.
-- The `reload: true` option ensures that the changes take effect immediately.
-- The `sysctl` tag allows for selective execution of these tasks if needed.
+- The Helm installation is only performed on server nodes.
+- Chrony is used for time synchronization instead of NTP.
+- The `addNFS` tag allows for selective execution of NFS-related tasks.
 
 ## Potential Improvements
 
@@ -61,3 +57,4 @@ This task enables IPv6 forwarding. While not all clusters use IPv6, enabling it 
    - Configuring firewall rules
 2. Add checks to verify the changes have been applied successfully.
 3. Consider making IPv6 forwarding optional based on a variable, in case IPv6 is not used in some environments.
+4. Implement more granular tagging for better task selection.

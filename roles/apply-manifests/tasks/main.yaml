@@ -14,7 +14,9 @@
     name: nfs-subdir-external-provisioner
     repo_url: https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
   when: inventory_hostname == groups['server_nodes'][0]
-
+  tags: 
+    - addNFS
+    
 - name: Install nfs-subdir-external-provisioner
   kubernetes.core.helm:
     name: nfs-subdir-external-provisioner
@@ -29,6 +31,8 @@
         name: nfs-client
         defaultClass: true
   when: inventory_hostname == groups['server_nodes'][0]
+  tags: 
+    - addNFS
 
 - name: Ensure kubeconfig file exists and has correct permissions
   ansible.builtin.file:

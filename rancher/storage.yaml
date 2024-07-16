@@ -1,0 +1,60 @@
+---
+- name: Setup Kubernetes Storage via Rancher
+  hosts: localhost
+  gather_facts: no
+  vars:
+    rancher_url: "{{ lookup('env', 'RANCHER_URL') }}"
+    rancher_token: "{{ lookup('env', 'RANCHER_TOKEN') }}"
+    cluster_id: "your-cluster-id"  # You need to specify your cluster ID here
+
+  tasks:
+    - name: Create StorageClass
+      uri:
+        url: "{{ rancher_url }}/v3/cluster/{{ cluster_id }}/storage.k8s.io.storageclass"
+        method: POST
+        body_format: json
+        body:
+          name: nfs-client-new
+          allowVolumeExpansion: true
+          provisioner: cluster.local/nfs-subdir-external-provisioner
+          reclaimPolicy: Delete
+          volumeBindingMode: Immediate
+          parameters:
+            archiveOnDelete: "true"
+          metadata:
+            annotations:
+              storageclass.kubernetes.io/is-default-class: "true"
+            labels:
+              app: nfs-subdir-external-provisioner
+              app.kubernetes.io/managed-by: Helm
+              chart: nfs-subdir-external-provisioner-4.0.18
+              heritage: Helm
+              release: nfs-subdir-external-provisioner
+        headers:
+          Content-Type: "application/json"
+          Authorization: "Bearer {{ rancher_token }}"
+        status_code: [200, 201]
+
+    - name: Create PersistentVolume
+      uri:
+        url: "{{ rancher_url }}/v3/cluster/{{ cluster_id }}/v1.persistentvolume"
+        method: POST
+        body_format: json
+        body:
+          metadata:
+            name: elasticsearch-data-01
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            capacity:
+              storage: 100Gi
+            nfs:
+              path: /share/NFSv=4/k8s-storage/elasticsearch-data-01
+              server: nas3e8d86
+            persistentVolumeReclaimPolicy: Retain
+            storageClassName: nfs-client-new
+            volumeMode: Filesystem
+        headers:
+          Content-Type: "application/json"
+          Authorization: "Bearer {{ rancher_token }}"
+        status_code: [200, 201]

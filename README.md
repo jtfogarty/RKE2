@@ -37,6 +37,12 @@ This Ansible playbook automates the process of setting up an RKE2 (Rancher Kuber
      d. Deploys cert-manager using Helm.
      e. Deploys Rancher using Helm, setting the hostname and replica count.
 
+
+commnads
+```
+./search_helm_values.sh "tls-rancher-ingress"
+```
+
 ## Project Structure
 
 ```

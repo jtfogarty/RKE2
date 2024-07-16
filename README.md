@@ -22,6 +22,8 @@ This Ansible playbook automates the process of setting up an RKE2 (Rancher Kuber
    - Applies the [`add-agent`](roles/add-agent/README.md) role to hosts in the `agent_nodes` group.
    - Sets up the RKE2 worker nodes.
 
+### MetalLB is currently not being installed.  pfSense is being used as a LB
+
 6. **Apply MetalLB and Rancher Manifests**:
    - Applies the [`apply-manifests`](roles/apply-manifests/README.md) role to `server_nodes`.
    - Configures MetalLB for load balancing in bare metal environments.

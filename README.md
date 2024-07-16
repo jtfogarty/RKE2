@@ -35,21 +35,62 @@ This Ansible playbook automates the process of setting up an RKE2 (Rancher Kuber
 ## Project Structure
 
 ```
-├── README.md (this file)
+├── README.md
 ├── collections
 │   └── requirements.yaml
+├── docs
+│   └── domain.md
 ├── inventory
 │   ├── group_vars
 │   │   └── all.yaml
 │   └── hosts.ini
 ├── roles
 │   ├── add-agent
+│   │   ├── README.md
+│   │   ├── tasks
+│   │   │   └── main.yaml
+│   │   └── templates
+│   │       ├── rke2-agent-config.j2
+│   │       └── rke2-agent.service.j2
 │   ├── add-server
+│   │   ├── README.md
+│   │   ├── tasks
+│   │   │   └── main.yaml
+│   │   └── templates
+│   │       └── rke2-server-config.j2
 │   ├── apply-manifests
+│   │   ├── README.md
+│   │   ├── tasks
+│   │   │   └── main.yaml
+│   │   └── templates
+│   │       ├── metallb-ippool.j2
+│   │       └── rancher-values.j2
 │   ├── prepare-nodes
+│   │   ├── README.md
+│   │   ├── handlers
+│   │   │   └── main.yaml
+│   │   ├── tasks
+│   │   │   └── main.yaml
+│   │   └── templates
+│   │       ├── chrony.conf.j2
+│   │       └── ntp.conf.j2
 │   ├── rke2-download
+│   │   ├── README.md
+│   │   └── tasks
+│   │       └── main.yaml
 │   └── rke2-prepare
-└── site.yaml
+│       ├── README.md
+│       ├── tasks
+│       │   └── main.yaml
+│       └── templates
+│           ├── rke2-agent.service.j2
+│           ├── rke2-server-config.j2
+│           └── rke2-server.service.j2
+├── site.yaml
+└── troubleshooting
+    ├── hosts.ini
+    ├── rancher_health_check.yaml
+    └── uninstall.yaml
 ```
 
 Each role has its own README file with detailed information about its tasks and variables.

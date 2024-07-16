@@ -1,7 +1,7 @@
 1. Definition: It's defined in the `all.yaml` file as:
 
 ```yaml
-rancher_hostname: "rancher.yourdomain.com"
+rancher_hostname: "rancher.docure.ai"
 ```
 
 2. Usage: This variable is used in the `roles/apply-manifests/tasks/main.yaml` file when deploying Rancher using Helm. Specifically, it's used in the "Deploy Rancher" task:

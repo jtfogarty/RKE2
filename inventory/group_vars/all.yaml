@@ -28,7 +28,7 @@ service_cidr: "10.43.0.0/16"
 cert_manager_version: "v1.13.3"
 
 # Rancher configuration
-rancher_hostname: "rancher.documentresearch.dev"
+rancher_hostname: "rancher.docure.ai"
 rancher_bootstrap_password: "hello-kitty"
 
 #force download of rke binary

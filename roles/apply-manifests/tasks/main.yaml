@@ -23,6 +23,7 @@
     chart_ref: nfs-subdir-external-provisioner/nfs-subdir-external-provisioner
     release_namespace: nfs-nas3e8d86
     create_namespace: true
+    update_repo_cache: true
     values:
       nfs:
         server: nas3e8d86

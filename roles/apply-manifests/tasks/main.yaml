@@ -129,6 +129,8 @@
         KUBECONFIG: /home/{{ ansible_user }}/.kube/config
   become_user: "{{ ansible_user }}"
   when: false #inventory_hostname == groups['server_nodes'][0]
+  tags:
+    - metallb
 
 # Deploy cert-manager
 - name: Deploy cert-manager
@@ -140,29 +142,12 @@
       register: cert_manager_ns
       ignore_errors: true
 
-    - name: Wait for cert-manager namespace to be fully deleted
-      kubernetes.core.k8s_info:
-        kind: Namespace
+    - name: Remove existing cert-manager installation
+      kubernetes.core.helm:
         name: cert-manager
-      register: cert_manager_ns_check
-      until: cert_manager_ns_check.resources | length == 0
-      retries: 30
-      delay: 10
-      when: cert_manager_ns.resources is defined and cert_manager_ns.resources | length > 0
-
-    - name: Remove cert-manager CRDs
-      kubernetes.core.k8s:
-        kind: CustomResourceDefinition
-        name: "{{ item }}"
+        release_namespace: cert-manager
         state: absent
-      loop:
-        - certificaterequests.cert-manager.io
-        - certificates.cert-manager.io
-        - challenges.acme.cert-manager.io
-        - clusterissuers.cert-manager.io
-        - issuers.cert-manager.io
-        - orders.acme.cert-manager.io
-      ignore_errors: true
+      when: cert_manager_ns.resources is defined and cert_manager_ns.resources | length > 0
 
     - name: Install cert-manager
       kubernetes.core.helm:
@@ -184,6 +169,8 @@
         var: cert_manager_install_result
 
   when: inventory_hostname == groups['server_nodes'][0]
+  tags:
+    - cert-manager
 
 # Deploy Rancher
 - name: Deploy Rancher
@@ -263,3 +250,5 @@
       retries: 20
       delay: 30
   when: inventory_hostname == groups['server_nodes'][0]
+  tags:
+    - cert-manager

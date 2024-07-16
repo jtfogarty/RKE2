@@ -251,4 +251,4 @@
       delay: 30
   when: inventory_hostname == groups['server_nodes'][0]
   tags:
-    - cert-manager
+    - rancher

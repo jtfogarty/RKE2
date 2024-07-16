@@ -9,6 +9,12 @@
   become_user: "{{ ansible_user }}"
   when: inventory_hostname == groups['server_nodes'][0]
 
+- name: Add nfs-subdir-external-provisioner Helm repository
+  kubernetes.core.helm_repository:
+    name: nfs-subdir-external-provisioner
+    repo_url: https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+  when: inventory_hostname == groups['server_nodes'][0]
+
 - name: Ensure kubeconfig file exists and has correct permissions
   ansible.builtin.file:
     path: /etc/rancher/rke2/rke2.yaml

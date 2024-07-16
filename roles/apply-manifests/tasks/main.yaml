@@ -21,8 +21,8 @@
   kubernetes.core.helm:
     name: nfs-subdir-external-provisioner
     chart_ref: nfs-subdir-external-provisioner/nfs-subdir-external-provisioner
-    release_namespace: default
-    create_namespace: false
+    release_namespace: nfs-nas3e8d86
+    create_namespace: true
     values:
       nfs:
         server: nas3e8d86

@@ -205,7 +205,7 @@
         chart_ref: https://neilpang.github.io/cert-manager-webhook-namecheap/
         release_namespace: cert-manager
         create_namespace: true
-        version: 0.2.0
+        chart_version: 0.2.0
         wait: true
         wait_timeout: 300s
 

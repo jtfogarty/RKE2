@@ -199,9 +199,17 @@
           extraArgs:
             - --dns01-recursive-nameservers=1.1.1.1:53,9.9.9.9:53
 
+    - name: Install namecheap-webhook
+      kubernetes.core.helm:
+        name: namecheap-webhook
+        chart_ref: https://github.com/namecheap/cert-manager-webhook-namecheap/releases/download/v0.1.0/cert-manager-webhook-namecheap-0.1.0.tgz
+        release_namespace: cert-manager
+        wait: true
+        wait_timeout: 300s
+
     - name: Install cert-manager-webhook-namecheap
       kubernetes.core.k8s:
-        definition: "{{ lookup('url', 'https://raw.githubusercontent.com/neilpang/cert-manager-webhook-namecheap/master/deploy/cert-manager-webhook-namecheap.yaml') | from_yaml_all | list }}"
+        definition: "{{ lookup('file', 'deploy/cert-manager-webhook-namecheap.yaml') | from_yaml_all | list }}"
         namespace: cert-manager
 
     - name: Create Namecheap API key secret

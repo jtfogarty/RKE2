@@ -189,6 +189,14 @@
           installCRDs: true
           webhook:
             timeoutSeconds: 30
+            enabled: true
+            securePort: 10250
+            caSecretName: cert-manager-webhook-ca
+            tlsSecretName: cert-manager-webhook-tls
+          cainjector:
+            enabled: true
+          startupapicheck:
+            enabled: true
 
     - name: Create ClusterIssuer for Let's Encrypt
       kubernetes.core.k8s:

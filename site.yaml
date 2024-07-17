@@ -11,7 +11,10 @@
           - lookup('env', 'LETSENCRYPT_EMAIL') != ""
           - lookup('env', 'NAMECHEAP_API_KEY') != ""
           - lookup('env', 'NAMECHEAP_USERNAME') != ""
-        fail_msg: "One or more required environment variables are not set. Please set RANCHER_HOSTNAME, RANCHER_BOOTSTRAP_PASSWORD, LETSENCRYPT_EMAIL, NAMECHEAP_API_KEY, and NAMECHEAP_USERNAME."
+        fail_msg: "One or more required environment variables are not set. Please set RANCHER_HOSTNAME, LETSENCRYPT_EMAIL, NAMECHEAP_API_KEY, and NAMECHEAP_USERNAME."
+  tags: 
+    - cert-manager
+    - rancher
 
 - name: Prepare all nodes
   hosts: all

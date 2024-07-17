@@ -232,9 +232,6 @@
                         name: namecheap-api-key
                         key: api-key
                       username: "{{ lookup('env', 'NAMECHEAP_USERNAME') }}"
-                - http01:
-                    ingress:
-                      class: nginx
 
     - name: Debug cert-manager installation result
       debug:

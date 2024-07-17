@@ -199,18 +199,18 @@
           extraArgs:
             - --dns01-recursive-nameservers=1.1.1.1:53,9.9.9.9:53
 
-    - name: Install namecheap-webhook
+    - name: Install cert-manager-webhook-namecheap
       kubernetes.core.helm:
-        name: namecheap-webhook
-        chart_ref: https://github.com/namecheap/cert-manager-webhook-namecheap/releases/download/v0.2.0/cert-manager-webhook-namecheap-0.2.0.tgz
+        name: cert-manager-webhook-namecheap
+        chart_ref: ./deploy/cert-manager-webhook-namecheap
         release_namespace: cert-manager
         wait: true
         wait_timeout: 300s
-
-    - name: Install cert-manager-webhook-namecheap
-      kubernetes.core.k8s:
-        definition: "{{ lookup('file', 'deploy/cert-manager-webhook-namecheap.yaml') | from_yaml_all | list }}"
-        namespace: cert-manager
+        values:
+          groupName: acme.namecheap.com
+          image:
+            repository: jgoodhouse/cert-manager-webhook-namecheap
+            tag: latest
 
     - name: Create Namecheap API key secret
       kubernetes.core.k8s:
@@ -223,6 +223,7 @@
           type: Opaque
           stringData:
             api-key: "{{ lookup('env', 'NAMECHEAP_API_KEY') }}"
+            api-user: "{{ lookup('env', 'NAMECHEAP_API_USER') }}"
 
     - name: Create ClusterIssuer for Let's Encrypt
       kubernetes.core.k8s:
@@ -246,15 +247,14 @@
                         apiKeySecretRef:
                           name: namecheap-api-key
                           key: api-key
-                        username: "{{ lookup('env', 'NAMECHEAP_USERNAME') }}"
-
-    - name: Debug cert-manager installation result
-      debug:
-        var: cert_manager_install_result
+                        apiUserSecretRef:
+                          name: namecheap-api-key
+                          key: api-user
 
   when: inventory_hostname == groups['server_nodes'][0]
   tags:
     - cert-manager
+
 
 # Deploy Rancher
 - name: Deploy Rancher

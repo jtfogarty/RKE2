@@ -1,5 +1,17 @@
 # bootstraps first server and copies configs for others/agents
 ---
+- name: Check required environment variables
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Ensure required environment variables are set
+      assert:
+        that:
+          - lookup('env', 'RANCHER_HOSTNAME') != ""
+          - lookup('env', 'RANCHER_BOOTSTRAP_PASSWORD') != ""
+          - lookup('env', 'LETSENCRYPT_EMAIL') != ""
+        fail_msg: "One or more required environment variables are not set. Please set RANCHER_HOSTNAME, RANCHER_BOOTSTRAP_PASSWORD, and LETSENCRYPT_EMAIL."
+
 - name: Prepare all nodes
   hosts: all
   roles:

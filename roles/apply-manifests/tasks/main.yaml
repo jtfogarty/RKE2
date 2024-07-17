@@ -232,14 +232,6 @@
                         name: namecheap-api-key
                         key: api-key
                       username: "{{ lookup('env', 'NAMECHEAP_USERNAME') }}"
-                - selector: {}
-                  dns01:
-                    namecheap:
-                      apiKeySecretRef: 
-                        name: namecheap-api-key
-                        key: api-key
-                      username: "{{ lookup('env', 'NAMECHEAP_USERNAME') }}"
-                - selector: {}
 
     - name: Debug cert-manager installation result
       debug:

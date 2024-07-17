@@ -1,0 +1,3 @@
+export RANCHER_HOSTNAME=rancher.docure.ai
+export RANCHER_BOOTSTRAP_PASSWORD=your_secure_password_here
+export LETSENCRYPT_EMAIL=jeff@fogarty.org

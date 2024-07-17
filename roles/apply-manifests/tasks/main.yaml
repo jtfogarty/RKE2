@@ -189,7 +189,29 @@
           installCRDs: true
           webhook:
             timeoutSeconds: 30
-      register: cert_manager_install_result
+
+    - name: Create ClusterIssuer for Let's Encrypt
+      kubernetes.core.k8s:
+        definition:
+          apiVersion: cert-manager.io/v1
+          kind: ClusterIssuer
+          metadata:
+            name: letsencrypt-prod
+          spec:
+            acme:
+              server: https://acme-v02.api.letsencrypt.org/directory
+              email: "{{ lookup('env', 'LETSENCRYPT_EMAIL') }}"
+              privateKeySecretRef:
+                name: letsencrypt-prod
+              solvers:
+                - dns01:
+                    namecheap:
+                      apiKey: "{{ lookup('env', 'NAMECHEAP_API_KEY') }}"
+                      apiUrl: "https://api.namecheap.com/xml.response"
+                      username: "{{ lookup('env', 'NAMECHEAP_USERNAME') }}"
+                      # Adjust this if using a different DNS provider or solver
+                      # Example for HTTP01 solver:
+                      # - http01: {}
 
     - name: Debug cert-manager installation result
       debug:
@@ -250,17 +272,30 @@
       ignore_errors: true
 
     - name: Install Rancher
-      ansible.builtin.command:
-        cmd: >
-          helm install rancher rancher-stable/rancher
-          --namespace cattle-system
-          --create-namespace
-          --set hostname={{ rancher_hostname }}
-          --set bootstrapPassword={{ rancher_bootstrap_password }}
-          --set "extraEnv[0].name=CATTLE_UI_PLUGIN_SYSTEM"
-          --set "extraEnv[0].value=\"true\""
-          --wait
-      register: rancher_install_result
+      kubernetes.core.helm:
+        name: rancher
+        chart_ref: rancher-stable/rancher
+        release_namespace: cattle-system
+        create_namespace: true
+        wait: true
+        values:
+          hostname: "{{ rancher_hostname }}"
+          bootstrapPassword: "{{ rancher_bootstrap_password }}"
+          ingress:
+            tls:
+              source: letsEncrypt
+          letsEncrypt:
+            email: "{{ lookup('env', 'LETSENCRYPT_EMAIL') }}"
+            ingress:
+              class: nginx
+          certmanager:
+            version: v1.13.3
+          extraEnv:
+            - name: CATTLE_UI_PLUGIN_SYSTEM
+              value: "true"
+          tls: external
+          privateCa: false
+          replicas: 3
 
     - name: Debug Rancher installation result
       debug:

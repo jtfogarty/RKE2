@@ -206,8 +206,10 @@
               solvers:
                 - dns01:
                     namecheap:
-                      apiKey: "{{ lookup('env', 'NAMECHEAP_API_KEY') }}"
-                      apiUrl: "https://api.namecheap.com/xml.response"
+                      apiKeySecretRef: 
+                        name: namecheap-api-key
+                        key:  "{{ lookup('env', 'NAMECHEAP_API_KEY') }}"
+                      #apiUrl: "https://api.namecheap.com/xml.response"
                       username: "{{ lookup('env', 'NAMECHEAP_USERNAME') }}"
                       # Adjust this if using a different DNS provider or solver
                       # Example for HTTP01 solver:

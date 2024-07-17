@@ -8,7 +8,6 @@
       assert:
         that:
           - lookup('env', 'RANCHER_HOSTNAME') != ""
-          - lookup('env', 'RANCHER_BOOTSTRAP_PASSWORD') != ""
           - lookup('env', 'LETSENCRYPT_EMAIL') != ""
           - lookup('env', 'NAMECHEAP_API_KEY') != ""
           - lookup('env', 'NAMECHEAP_USERNAME') != ""

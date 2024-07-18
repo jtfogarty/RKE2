@@ -202,7 +202,7 @@
     - name: Install cert-manager-webhook-namecheap
       kubernetes.core.helm:
         name: cert-manager-webhook-namecheap
-        chart_ref: "{{ playbook_dir }}/../letsEncrypt/kelvie/deploy/cert-manager-webhook-namecheap"
+        chart_ref: "{{ playbook_dir }}/../../letsEncrypt/kelvie/deploy/cert-manager-webhook-namecheap"
         release_namespace: cert-manager
         wait: true
         wait_timeout: 300s
@@ -215,7 +215,7 @@
     - name: Install letsencrypt-namecheap-issuer
       kubernetes.core.helm:
         name: letsencrypt-namecheap-issuer
-        chart_ref: "{{ playbook_dir }}/../letsEncrypt/kelvie/deploy/letsencrypt-namecheap-issuer"
+        chart_ref: "{{ playbook_dir }}/../../letsEncrypt/kelvie/deploy/letsencrypt-namecheap-issuer"
         release_namespace: cert-manager
         wait: true
         wait_timeout: 300s

@@ -206,14 +206,14 @@
 
     - name: Copy cert-manager-webhook-namecheap chart to target host
       ansible.builtin.copy:
-        src: "/Users/jeff-imac/Documents/projects/RKE2/letsEncrypt/kelvie/deploy/cert-manager-webhook-namecheap/"
+        src: "/home/jtfogar/projects/RKE2/letsEncrypt/kelvie/deploy/cert-manager-webhook-namecheap/"
         dest: /tmp/helm_charts/cert-manager-webhook-namecheap/
         mode: '0755'
         remote_src: no
 
     - name: Copy letsencrypt-namecheap-issuer chart to target host
       ansible.builtin.copy:
-        src: "/Users/jeff-imac/Documents/projects/RKE2/letsEncrypt/kelvie/deploy/letsencrypt-namecheap-issuer/"
+        src: "/home/jtfogar/projects/RKE2/letsEncrypt/kelvie/deploy/letsencrypt-namecheap-issuer/"
         dest: /tmp/helm_charts/letsencrypt-namecheap-issuer/
         mode: '0755'
         remote_src: no

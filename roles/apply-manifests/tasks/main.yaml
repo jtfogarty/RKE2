@@ -223,19 +223,6 @@
           email: "{{ lookup('env', 'LETSENCRYPT_EMAIL') }}"
           secret: namecheap-credentials
 
-    - name: Install cert-manager-webhook-namecheap
-      kubernetes.core.helm:
-        name: cert-manager-webhook-namecheap
-        chart_ref: "{{ playbook_dir }}/../deploy/cert-manager-webhook-namecheap"
-        release_namespace: cert-manager
-        wait: true
-        wait_timeout: 300s
-        values:
-          groupName: acme.namecheap.com
-          image:
-            repository: jgoodhouse/cert-manager-webhook-namecheap
-            tag: latest
-
     - name: Create Namecheap API key secret
       kubernetes.core.k8s:
         definition:

@@ -199,10 +199,27 @@
           extraArgs:
             - --dns01-recursive-nameservers=1.1.1.1:53,9.9.9.9:53
 
+    - name: Ensure the target directory exists
+      ansible.builtin.file:
+        path: /tmp/helm_charts
+        state: directory
+
+    - name: Copy cert-manager-webhook-namecheap chart to target host
+      ansible.builtin.copy:
+        src: "/Users/jeff-imac/Documents/projects/RKE2/letsEncrypt/kelvie/deploy/cert-manager-webhook-namecheap/"
+        dest: /tmp/helm_charts/cert-manager-webhook-namecheap/
+        mode: '0755'
+
+    - name: Copy letsencrypt-namecheap-issuer chart to target host
+      ansible.builtin.copy:
+        src: "/Users/jeff-imac/Documents/projects/RKE2/letsEncrypt/kelvie/deploy/letsencrypt-namecheap-issuer/"
+        dest: /tmp/helm_charts/letsencrypt-namecheap-issuer/
+        mode: '0755'
+
     - name: Install cert-manager-webhook-namecheap
       kubernetes.core.helm:
         name: cert-manager-webhook-namecheap
-        chart_ref: "/Users/jeff-imac/Documents/projects/RKE2/letsEncrypt/kelvie/deploy/cert-manager-webhook-namecheap"
+        chart_ref: /tmp/helm_charts/cert-manager-webhook-namecheap
         release_namespace: cert-manager
         wait: true
         wait_timeout: 300s
@@ -215,7 +232,7 @@
     - name: Install letsencrypt-namecheap-issuer
       kubernetes.core.helm:
         name: letsencrypt-namecheap-issuer
-        chart_ref: "/Users/jeff-imac/Documents/projects/RKE2/letsEncrypt/kelvie/deploy/letsencrypt-namecheap-issuer"
+        chart_ref: /tmp/helm_charts/letsencrypt-namecheap-issuer
         release_namespace: cert-manager
         wait: true
         wait_timeout: 300s

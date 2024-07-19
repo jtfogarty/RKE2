@@ -37,6 +37,8 @@ This Ansible playbook automates the process of setting up an RKE2 (Rancher Kuber
      d. Deploys cert-manager using Helm.
      e. Deploys Rancher using Helm, setting the hostname and replica count.
 
+> ### :warning: **Note:**
+> **Cert Manager is currently not being installed by Ansible.  `install-cert-mgr.sh` in the script folder is installing cert manager. This is congfigured to use Let's Encrypt and NameCheap. see [`README`](scripts/README.md)**
 
 commnads
 ```

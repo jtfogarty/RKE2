@@ -1,38 +1,54 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+# Enable strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
+# Function to check if kubectl is available
+check_kubectl() {
+    if ! command -v kubectl &> /dev/null; then
+        echo "Error: kubectl is not installed or not in PATH"
+        exit 1
+    fi
+}
 
 # Function to check if a Kubernetes resource type exists
 resource_exists() {
-    kubectl api-resources --no-headers -o name | grep -q "^$1$"
+    kubectl api-resources --verbs=list --namespaced -o name | grep -q "^$1$"
     return $?
 }
 
 # Function to safely get resources
 safe_get_resources() {
-    local resources=()
+    local existing_resources=()
     for resource in "$@"; do
         if resource_exists "$resource"; then
-            resources+=("$resource")
+            existing_resources+=("$resource")
         else
-            echo "Resource type '$resource' does not exist in the cluster"
+            echo "Warning: Resource type '$resource' does not exist in the cluster"
         fi
     done
-    if [ ${#resources[@]} -gt 0 ]; then
-        kubectl get "${resources[@]}" --all-namespaces
+    if [ ${#existing_resources[@]} -gt 0 ]; then
+        kubectl get "${existing_resources[@]}" --all-namespaces
+    else
+        echo "No valid resources to get"
     fi
 }
 
 # Function to safely delete resources
 safe_delete_resources() {
-    local resources=()
+    local existing_resources=()
     for resource in "$@"; do
         if resource_exists "$resource"; then
-            resources+=("$resource")
+            existing_resources+=("$resource")
         else
-            echo "Resource type '$resource' does not exist in the cluster"
+            echo "Warning: Resource type '$resource' does not exist in the cluster"
         fi
     done
-    if [ ${#resources[@]} -gt 0 ]; then
-        kubectl delete "${resources[@]}" --all-namespaces
+    if [ ${#existing_resources[@]} -gt 0 ]; then
+        kubectl delete "${existing_resources[@]}" --all-namespaces
+    else
+        echo "No valid resources to delete"
     fi
 }
 
@@ -46,15 +62,25 @@ cert_manager_resources=(
     "challenges"
 )
 
-echo "Checking for existing cert-manager resources..."
-safe_get_resources "${cert_manager_resources[@]}"
+# Main script execution
+main() {
+    check_kubectl
 
-read -p "Do you want to delete these resources? (y/n) " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Deleting cert-manager resources..."
-    safe_delete_resources "${cert_manager_resources[@]}"
-fi
+    echo "Checking for existing cert-manager resources..."
+    safe_get_resources "${cert_manager_resources[@]}"
+
+    read -p "Do you want to delete these resources? (y/n) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        echo "Deleting cert-manager resources..."
+        safe_delete_resources "${cert_manager_resources[@]}"
+    fi
+
+    # ... (rest of the script remains unchanged)
+}
+
+# Run the main function
+main
 
 echo "Checking for cert-manager CRDs..."
 cert_manager_crds=$(kubectl get crd -o name | grep cert-manager)

@@ -61,8 +61,8 @@
     group: root
     mode: '0644'
   when: 
-    - inventory_hostname in [groups['server_nodes'][1], groups['server_nodes'][2]]
     - configure_additional_nodes | default(false) | bool
+    - inventory_hostname in [groups['server_nodes'][1], groups['server_nodes'][2]]
 
 - name: Ensure RKE2 server is enabled and running on nodes 2 and 3
   ansible.builtin.systemd:
@@ -80,8 +80,8 @@
     state: present
     timeout: 300
   when: 
-    - inventory_hostname in [groups['server_nodes'][1], groups['server_nodes'][2]]
     - configure_additional_nodes | default(false) | bool
+    - inventory_hostname in [groups['server_nodes'][1], groups['server_nodes'][2]]
 
 # Deploy configurations and service files
 - name: Deploy RKE2 server Configuration

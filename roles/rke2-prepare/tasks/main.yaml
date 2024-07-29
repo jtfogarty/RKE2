@@ -60,7 +60,9 @@
     owner: root
     group: root
     mode: '0644'
-  when: inventory_hostname in [groups['server_nodes'][1], groups['server_nodes'][2]]
+  when: 
+    - inventory_hostname in [groups['server_nodes'][1], groups['server_nodes'][2]]
+    - configure_additional_nodes | default(false) | bool
 
 - name: Ensure RKE2 server is enabled and running on nodes 2 and 3
   ansible.builtin.systemd:
@@ -68,14 +70,18 @@
     enabled: true
     state: started
     daemon_reload: true
-  when: inventory_hostname in [groups['server_nodes'][1], groups['server_nodes'][2]]
+  when: 
+    - inventory_hostname in [groups['server_nodes'][1], groups['server_nodes'][2]]
+    - configure_additional_nodes | default(false) | bool
 
 - name: Wait for RKE2 server to be ready on nodes 2 and 3
   ansible.builtin.wait_for:
     path: /var/lib/rancher/rke2/server/node-token
     state: present
     timeout: 300
-  when: inventory_hostname in [groups['server_nodes'][1], groups['server_nodes'][2]]
+  when: 
+    - inventory_hostname in [groups['server_nodes'][1], groups['server_nodes'][2]]
+    - configure_additional_nodes | default(false) | bool
 
 # Deploy configurations and service files
 - name: Deploy RKE2 server Configuration

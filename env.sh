@@ -1,5 +1,5 @@
 export RANCHER_HOSTNAME=rancher.docure.ai
 export RANCHER_BOOTSTRAP_PASSWORD=your_secure_password_here
 export LETSENCRYPT_EMAIL=jeff@fogarty.org
-export NAMECHEAP_API_KEY=
-export NAMECHEAP_USERNAME=
+export NAMECHEAP_API_KEY=hello
+export NAMECHEAP_USERNAME=whatUp

@@ -1,7 +1,8 @@
 os: "linux"
 arch: "amd64"
 
-ansible_ssh_private_key_file: ~/.ssh/id_rsa_rke2
+#ansible_ssh_private_key_file: ~/.ssh/id_rsa_rke2
+ansible_ssh_private_key_file: ~/.ssh/id_rsa_k8s
 ansible_python_interpreter: /usr/bin/python3.10
 
 vip_interface: enp1s0
@@ -38,5 +39,7 @@ force_rke2_download: false
 overwrite_agent_config: false
 
 # Force reinstallation of components
-force_reinstall_components: true
+force_reinstall_components: false
 metallb_reinstall_components: false
+
+configure_additional_nodes: false  

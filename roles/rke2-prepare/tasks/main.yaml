@@ -71,8 +71,8 @@
     state: started
     daemon_reload: true
   when: 
-    - inventory_hostname in [groups['server_nodes'][1], groups['server_nodes'][2]]
     - configure_additional_nodes | default(false) | bool
+    - inventory_hostname in [groups['server_nodes'][1], groups['server_nodes'][2]]
 
 - name: Wait for RKE2 server to be ready on nodes 2 and 3
   ansible.builtin.wait_for:

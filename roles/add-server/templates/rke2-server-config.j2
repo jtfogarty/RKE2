@@ -4,7 +4,11 @@ server: https://{{ vip }}:9345
 tls-san:
   - {{ vip }}
   - {{ hostvars[groups['server_nodes'][0]]['ansible_host'] }}
+{% if groups['server_nodes'] | length > 1 %}
   - {{ hostvars[groups['server_nodes'][1]]['ansible_host'] }}
+{% endif %}
+{% if groups['server_nodes'] | length > 2 %}
   - {{ hostvars[groups['server_nodes'][2]]['ansible_host'] }}
+{% endif %}
 node-label:
   - server=true

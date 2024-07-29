@@ -92,7 +92,9 @@
     group: root
     mode: '0644'
     force: yes
-  when: inventory_hostname in groups['server_nodes']
+  when: 
+    - configure_additional_nodes | default(false) | bool  
+    - inventory_hostname in groups['server_nodes']
   register: rke2_config
 
 

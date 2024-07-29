@@ -6,6 +6,7 @@
     owner: root
     group: root
     mode: '0644'
+    when: inventory_hostname == groups['agent_nodes'][0]
 
 # Keep checking the cluster API until it's functioning (deployed)
 - name: Wait for cluster API to be ready (can take 5-10 mins depending on internet/hardware)

@@ -78,6 +78,7 @@
     - apply-manifests
   tags:
     - metallb
+  when: not configure_additional_nodes | bool
 
 - name: Deploy cert-manager and Rancher
   hosts: server_nodes[0]
@@ -175,3 +176,4 @@
       retries: 30
       delay: 30
       when: rancher_status.status is not defined or rancher_status.status.status != 'deployed'
+  when: not configure_additional_node | bool

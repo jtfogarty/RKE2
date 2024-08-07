@@ -1,5 +1,4 @@
-Here's a summary of the Traefik issue as I understand it based on our conversation:
-
+Here's a summary of the Traefik issue as I understand it based on our conversation: [`export_traefik_config`](../scripts/export_traefik_config.sh)
 1. Initial Configuration:
    - You have a Kubernetes cluster with Traefik as the ingress controller.
    - HAProxy is set up in front of the Kubernetes cluster, forwarding traffic to the Traefik NodePort service.

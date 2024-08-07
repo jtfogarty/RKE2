@@ -42,4 +42,4 @@ overwrite_agent_config: false
 force_reinstall_components: false
 metallb_reinstall_components: false
 
-configure_additional_nodes: false  
+configure_additional_nodes: true  

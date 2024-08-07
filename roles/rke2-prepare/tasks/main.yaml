@@ -44,7 +44,6 @@
   when: groups['server_nodes'][0] in hostvars and 'rke2_token' in hostvars[groups['server_nodes'][0]]
   failed_when: rke2_token is not defined
 
-
 - name: Ensure token file exists on all server nodes
   ansible.builtin.copy:
     content: "{{ rke2_token }}"
@@ -61,7 +60,7 @@
     group: root
     mode: '0644'
   when: 
-    - configure_additional_nodes | default(false) | bool
+    - not configure_additional_nodes | bool
     - inventory_hostname in [groups['server_nodes'][1], groups['server_nodes'][2]]
 
 - name: Ensure RKE2 server is enabled and running on nodes 2 and 3
@@ -71,7 +70,7 @@
     state: started
     daemon_reload: true
   when: 
-    - configure_additional_nodes | default(false) | bool
+    - not configure_additional_nodes | bool
     - inventory_hostname in [groups['server_nodes'][1], groups['server_nodes'][2]]
 
 - name: Wait for RKE2 server to be ready on nodes 2 and 3
@@ -80,7 +79,7 @@
     state: present
     timeout: 300
   when: 
-    - configure_additional_nodes | default(false) | bool
+    - not configure_additional_nodes | bool
     - inventory_hostname in [groups['server_nodes'][1], groups['server_nodes'][2]]
 
 # Deploy configurations and service files
@@ -93,10 +92,9 @@
     mode: '0644'
     force: yes
   when: 
-    - configure_additional_nodes | default(false) | bool  
+    - not configure_additional_nodes | bool  
     - inventory_hostname in groups['server_nodes']
   register: rke2_config
-
 
 - name: Create systemd service file for RKE2 server
   ansible.builtin.template:
@@ -228,4 +226,3 @@
   delay: 10
   environment:
     KUBECONFIG: /etc/rancher/rke2/rke2.yaml
-

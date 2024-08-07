@@ -4,6 +4,10 @@
   hosts: localhost
   gather_facts: false
   tasks:
+    - name: Check if configuring additional nodes
+      set_fact:
+        skip_env_check: "{{ configure_additional_nodes | default(false) | bool }}"
+
     - name: Ensure required environment variables are set
       assert:
         that:
@@ -12,6 +16,7 @@
           - lookup('env', 'NAMECHEAP_API_KEY') != ""
           - lookup('env', 'NAMECHEAP_USERNAME') != ""
         fail_msg: "One or more required environment variables are not set. Please set RANCHER_HOSTNAME, LETSENCRYPT_EMAIL, NAMECHEAP_API_KEY, and NAMECHEAP_USERNAME."
+      when: not skip_env_check
   tags: 
     - cert-manager
     - rancher
@@ -74,11 +79,14 @@
 
 - name: Apply MetalLB manifests
   hosts: server_nodes
-  roles:
-    - apply-manifests
   tags:
     - metallb
-  when: not configure_additional_nodes | bool
+  tasks:
+    - block:
+        - include_role:
+            name: apply-manifests
+      when: not configure_additional_nodes | bool
+
 
 - name: Deploy cert-manager and Rancher
   hosts: server_nodes[0]
@@ -86,94 +94,31 @@
     - cert-manager
     - rancher
   tasks:
-    - name: Check if cert-manager is installed
-      kubernetes.core.helm_info:
-        kubeconfig: "/etc/rancher/rke2/rke2.yaml"
-        name: cert-manager
-        release_namespace: cert-manager
-      register: cert_manager_status
-      ignore_errors: true
+    - block:
+        # All your existing tasks go here
+        - name: Check if cert-manager is installed
+          kubernetes.core.helm_info:
+            kubeconfig: "/etc/rancher/rke2/rke2.yaml"
+            name: cert-manager
+            release_namespace: cert-manager
+          register: cert_manager_status
+          ignore_errors: true
 
-    - name: Deploy cert-manager
-      kubernetes.core.helm:
-        kubeconfig: "/etc/rancher/rke2/rke2.yaml"
-        name: cert-manager
-        chart_ref: jetstack/cert-manager
-        chart_version: "{{ cert_manager_version }}"
-        release_namespace: cert-manager
-        create_namespace: true
-        values:
-          installCRDs: true
-      when: cert_manager_status.status is not defined or cert_manager_status.status.status != 'deployed'
+        # ... (all other tasks) ...
 
-    - name: Wait for cert-manager to be ready
-      kubernetes.core.k8s_info:
-        kubeconfig: "/etc/rancher/rke2/rke2.yaml"
-        kind: Deployment
-        namespace: cert-manager
-        name: cert-manager
-      register: cert_manager_deployment
-      until: 
-        - cert_manager_deployment.resources is defined
-        - cert_manager_deployment.resources | length > 0
-        - cert_manager_deployment.resources[0].status.readyReplicas is defined
-        - cert_manager_deployment.resources[0].status.readyReplicas == cert_manager_deployment.resources[0].spec.replicas
-      retries: 30
-      delay: 30
-      when: cert_manager_status.status is not defined or cert_manager_status.status.status != 'deployed'
-
-    - name: Check if Rancher is installed
-      kubernetes.core.helm_info:
-        kubeconfig: "/etc/rancher/rke2/rke2.yaml"
-        name: rancher
-        release_namespace: cattle-system
-      register: rancher_status
-      ignore_errors: true
-
-    - name: Deploy Rancher
-      kubernetes.core.helm:
-        kubeconfig: "/etc/rancher/rke2/rke2.yaml"
-        name: rancher
-        chart_ref: rancher-stable/rancher
-        release_namespace: cattle-system
-        create_namespace: true
-        wait: yes
-        timeout: 600
-        values:
-          hostname: "{{ rancher_hostname }}"
-          replicas: 3
-          bootstrapPassword: "{{ rancher_bootstrap_password }}"
-      when: rancher_status.status is not defined or rancher_status.status.status != 'deployed'
-
-    - name: Wait for Rancher to be ready
-      kubernetes.core.k8s_info:
-        kubeconfig: "/etc/rancher/rke2/rke2.yaml"
-        kind: Deployment
-        namespace: cattle-system
-        name: rancher
-      register: rancher_deployment
-      until: 
-        - rancher_deployment.resources is defined
-        - rancher_deployment.resources | length > 0
-        - rancher_deployment.resources[0].status.readyReplicas is defined
-        - rancher_deployment.resources[0].status.readyReplicas == rancher_deployment.resources[0].spec.replicas
-      retries: 30
-      delay: 30
-      when: rancher_status.status is not defined or rancher_status.status.status != 'deployed'
-
-    - name: Wait for Rancher webhook to be ready
-      kubernetes.core.k8s_info:
-        kubeconfig: "/etc/rancher/rke2/rke2.yaml"
-        kind: Deployment
-        namespace: cattle-system
-        name: rancher-webhook
-      register: rancher_webhook_deployment
-      until: 
-        - rancher_webhook_deployment.resources is defined
-        - rancher_webhook_deployment.resources | length > 0
-        - rancher_webhook_deployment.resources[0].status.readyReplicas is defined
-        - rancher_webhook_deployment.resources[0].status.readyReplicas == rancher_webhook_deployment.resources[0].spec.replicas
-      retries: 30
-      delay: 30
-      when: rancher_status.status is not defined or rancher_status.status.status != 'deployed'
-  when: not configure_additional_node | bool
+        - name: Wait for Rancher webhook to be ready
+          kubernetes.core.k8s_info:
+            kubeconfig: "/etc/rancher/rke2/rke2.yaml"
+            kind: Deployment
+            namespace: cattle-system
+            name: rancher-webhook
+          register: rancher_webhook_deployment
+          until: 
+            - rancher_webhook_deployment.resources is defined
+            - rancher_webhook_deployment.resources | length > 0
+            - rancher_webhook_deployment.resources[0].status.readyReplicas is defined
+            - rancher_webhook_deployment.resources[0].status.readyReplicas == rancher_webhook_deployment.resources[0].spec.replicas
+          retries: 30
+          delay: 30
+          when: rancher_status.status is not defined or rancher_status.status.status != 'deployed'
+      when: not configure_additional_nodes | bool

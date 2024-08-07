@@ -1,6 +1,5 @@
-Certainly! I'll create a markdown document that explains how Ollama and Typesense are being ingressed, including their relationship with Traefik. 
+This markdown document that explains how Ollama and Typesense are being ingressed, including their relationship with Traefik. 
 
-```markdown
 # Ingress Configuration for Ollama and Typesense
 
 ## Overview

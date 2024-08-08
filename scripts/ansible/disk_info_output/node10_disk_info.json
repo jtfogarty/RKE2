@@ -1,0 +1,108 @@
+{
+    "devices": [
+        "loop0",
+        "loop1",
+        "loop2",
+        "loop3",
+        "loop4",
+        "loop5",
+        "nvme1n1",
+        "nvme0n1",
+        "\u251c\u2500nvme0n1p1",
+        "\u251c\u2500nvme0n1p2",
+        "\u2514\u2500nvme0n1p3",
+        "\u2514\u2500ubuntu--vg-ubuntu--lv"
+    ],
+    "disk_details": [
+        {
+            "fstype": "squashfs",
+            "mountpoint": "/snap/core20/2105",
+            "name": "loop0",
+            "size": "63.9M",
+            "type": "loop"
+        },
+        {
+            "fstype": "squashfs",
+            "mountpoint": "/snap/core20/2318",
+            "name": "loop1",
+            "size": "63.9M",
+            "type": "loop"
+        },
+        {
+            "fstype": "squashfs",
+            "mountpoint": "/snap/lxd/27037",
+            "name": "loop2",
+            "size": "87M",
+            "type": "loop"
+        },
+        {
+            "fstype": "squashfs",
+            "mountpoint": "/snap/lxd/29351",
+            "name": "loop3",
+            "size": "87M",
+            "type": "loop"
+        },
+        {
+            "fstype": "squashfs",
+            "mountpoint": "/snap/snapd/20671",
+            "name": "loop4",
+            "size": "40.4M",
+            "type": "loop"
+        },
+        {
+            "fstype": "squashfs",
+            "mountpoint": "/snap/snapd/21759",
+            "name": "loop5",
+            "size": "38.8M",
+            "type": "loop"
+        },
+        {
+            "fstype": "N/A",
+            "mountpoint": "N/A",
+            "name": "nvme1n1",
+            "size": "1.9T",
+            "type": "disk"
+        },
+        {
+            "fstype": "N/A",
+            "mountpoint": "N/A",
+            "name": "nvme0n1",
+            "size": "931.5G",
+            "type": "disk"
+        },
+        {
+            "fstype": "vfat",
+            "mountpoint": "/boot/efi",
+            "name": "\u251c\u2500nvme0n1p1",
+            "size": "1G",
+            "type": "part"
+        },
+        {
+            "fstype": "ext4",
+            "mountpoint": "/boot",
+            "name": "\u251c\u2500nvme0n1p2",
+            "size": "2G",
+            "type": "part"
+        },
+        {
+            "fstype": "LVM2_member",
+            "mountpoint": "N/A",
+            "name": "\u2514\u2500nvme0n1p3",
+            "size": "928.5G",
+            "type": "part"
+        },
+        {
+            "fstype": "ext4",
+            "mountpoint": "/",
+            "name": "\u2514\u2500ubuntu--vg-ubuntu--lv",
+            "size": "100G",
+            "type": "lvm"
+        }
+    ],
+    "hostname": "node10",
+    "lvm_devices": [
+        "/dev/nvme0n1p3"
+    ],
+    "os_device": "/dev/mapper/ubuntu--vg-ubuntu--lv",
+    "total_devices": "12"
+}

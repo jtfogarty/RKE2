@@ -1,0 +1,124 @@
+{
+    "devices": [
+        "loop0",
+        "loop1",
+        "loop3",
+        "loop4",
+        "loop5",
+        "loop6",
+        "sda",
+        "\u251c\u2500sda1",
+        "\u2514\u2500sda2",
+        "sdb",
+        "\u251c\u2500sdb1",
+        "\u251c\u2500sdb2",
+        "\u2514\u2500sdb3",
+        "\u2514\u2500ubuntu--vg-ubuntu--lv"
+    ],
+    "disk_details": [
+        {
+            "fstype": "squashfs",
+            "mountpoint": "/snap/core20/2318",
+            "name": "loop0",
+            "size": "63.9M",
+            "type": "loop"
+        },
+        {
+            "fstype": "squashfs",
+            "mountpoint": "/snap/core20/2105",
+            "name": "loop1",
+            "size": "63.9M",
+            "type": "loop"
+        },
+        {
+            "fstype": "squashfs",
+            "mountpoint": "/snap/lxd/28373",
+            "name": "loop3",
+            "size": "87M",
+            "type": "loop"
+        },
+        {
+            "fstype": "squashfs",
+            "mountpoint": "/snap/snapd/20671",
+            "name": "loop4",
+            "size": "40.4M",
+            "type": "loop"
+        },
+        {
+            "fstype": "squashfs",
+            "mountpoint": "/snap/snapd/21759",
+            "name": "loop5",
+            "size": "38.8M",
+            "type": "loop"
+        },
+        {
+            "fstype": "/snap/lxd/29351",
+            "mountpoint": "N/A",
+            "name": "loop6",
+            "size": "87M",
+            "type": "loop"
+        },
+        {
+            "fstype": "N/A",
+            "mountpoint": "N/A",
+            "name": "sda",
+            "size": "931.5G",
+            "type": "disk"
+        },
+        {
+            "fstype": "xfs",
+            "mountpoint": "N/A",
+            "name": "\u251c\u2500sda1",
+            "size": "558.9G",
+            "type": "part"
+        },
+        {
+            "fstype": "xfs",
+            "mountpoint": "N/A",
+            "name": "\u2514\u2500sda2",
+            "size": "372.6G",
+            "type": "part"
+        },
+        {
+            "fstype": "N/A",
+            "mountpoint": "N/A",
+            "name": "sdb",
+            "size": "232.9G",
+            "type": "disk"
+        },
+        {
+            "fstype": "vfat",
+            "mountpoint": "/boot/efi",
+            "name": "\u251c\u2500sdb1",
+            "size": "1G",
+            "type": "part"
+        },
+        {
+            "fstype": "ext4",
+            "mountpoint": "/boot",
+            "name": "\u251c\u2500sdb2",
+            "size": "2G",
+            "type": "part"
+        },
+        {
+            "fstype": "LVM2_member",
+            "mountpoint": "N/A",
+            "name": "\u2514\u2500sdb3",
+            "size": "229.8G",
+            "type": "part"
+        },
+        {
+            "fstype": "ext4",
+            "mountpoint": "/",
+            "name": "\u2514\u2500ubuntu--vg-ubuntu--lv",
+            "size": "100G",
+            "type": "lvm"
+        }
+    ],
+    "hostname": "node8",
+    "lvm_devices": [
+        "/dev/sdb3 "
+    ],
+    "os_device": "/dev/mapper/ubuntu--vg-ubuntu--lv",
+    "total_devices": "14"
+}

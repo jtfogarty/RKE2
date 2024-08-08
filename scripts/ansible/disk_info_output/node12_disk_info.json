@@ -1,0 +1,92 @@
+{
+    "devices": [
+        "loop0",
+        "loop1",
+        "loop2",
+        "sda",
+        "\u251c\u2500sda1",
+        "\u251c\u2500sda2",
+        "\u2514\u2500sda3",
+        "\u2514\u2500ubuntu--vg-ubuntu--lv",
+        "sdb",
+        "\u2514\u2500sdb1"
+    ],
+    "disk_details": [
+        {
+            "fstype": "squashfs",
+            "mountpoint": "/snap/core20/2105",
+            "name": "loop0",
+            "size": "63.9M",
+            "type": "loop"
+        },
+        {
+            "fstype": "squashfs",
+            "mountpoint": "/snap/lxd/27037",
+            "name": "loop1",
+            "size": "87M",
+            "type": "loop"
+        },
+        {
+            "fstype": "squashfs",
+            "mountpoint": "/snap/snapd/20671",
+            "name": "loop2",
+            "size": "40.4M",
+            "type": "loop"
+        },
+        {
+            "fstype": "N/A",
+            "mountpoint": "N/A",
+            "name": "sda",
+            "size": "465.8G",
+            "type": "disk"
+        },
+        {
+            "fstype": "vfat",
+            "mountpoint": "/boot/efi",
+            "name": "\u251c\u2500sda1",
+            "size": "1G",
+            "type": "part"
+        },
+        {
+            "fstype": "ext4",
+            "mountpoint": "/boot",
+            "name": "\u251c\u2500sda2",
+            "size": "2G",
+            "type": "part"
+        },
+        {
+            "fstype": "LVM2_member",
+            "mountpoint": "N/A",
+            "name": "\u2514\u2500sda3",
+            "size": "462.7G",
+            "type": "part"
+        },
+        {
+            "fstype": "ext4",
+            "mountpoint": "/",
+            "name": "\u2514\u2500ubuntu--vg-ubuntu--lv",
+            "size": "100G",
+            "type": "lvm"
+        },
+        {
+            "fstype": "N/A",
+            "mountpoint": "N/A",
+            "name": "sdb",
+            "size": "1.8T",
+            "type": "disk"
+        },
+        {
+            "fstype": "ext4",
+            "mountpoint": "/data",
+            "name": "\u2514\u2500sdb1",
+            "size": "1.8T",
+            "type": "part"
+        }
+    ],
+    "hostname": "node12",
+    "lvm_devices": [
+        "/dev/sda3 "
+    ],
+    "os_device": "/dev/mapper/ubuntu--vg-ubuntu--lv",
+    "total_devices": "10"
+}

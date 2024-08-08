@@ -10,9 +10,13 @@ apply_labels() {
     # Apply the longhornnode label
     kubectl label nodes "$node" longhornnode=true --overwrite
     
+    # Create the JSON string and encode it to base64
+    json_config="[{\"path\":\"$device\",\"allowScheduling\":true}]"
+    encoded_config=$(echo -n "$json_config" | base64 | tr -d '\n')
+    
     # Apply the default-disks-config label
     kubectl label nodes "$node" \
-        node.longhorn.io/default-disks-config="[{\"path\":\"$device\",\"allowScheduling\":true}]" \
+        node.longhorn.io/default-disks-config="$encoded_config" \
         --overwrite
     
     echo "Labels applied to $node"

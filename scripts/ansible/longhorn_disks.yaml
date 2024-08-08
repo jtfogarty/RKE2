@@ -1,11 +1,22 @@
 ---
 - name: Prepare disks for Longhorn
-  hosts: node5,node6,node11,node12
+  hosts: node5,node6,node8,node9,node10,node11,node12
   become: yes
   vars:
-    device: /dev/sdb
+    devices:
+      node5: /dev/sdb
+      node6: /dev/sdb
+      node8: /dev/sda
+      node9: /dev/sda
+      node10: /dev/nvme1n1
+      node11: /dev/sdb
+      node12: /dev/sdb
 
   tasks:
+    - name: Set device variable for this host
+      set_fact:
+        device: "{{ devices[inventory_hostname] }}"
+
     - name: Unmount {{ device }} if mounted
       mount:
         path: "{{ item }}"
@@ -15,6 +26,7 @@
       loop:
         - /data
         - "{{ device }}1"
+        - "{{ device }}2"
       ignore_errors: yes
 
     - name: Remove {{ device }} from /etc/fstab
@@ -34,6 +46,7 @@
       loop:
         - 1
         - 2
+        - 3
       ignore_errors: yes
 
     - name: Inform the OS of partition table changes

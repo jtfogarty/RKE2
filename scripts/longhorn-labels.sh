@@ -7,16 +7,18 @@ apply_labels() {
     
     echo "Labeling node $node with device $device"
     
-    # Apply the longhornnode label
-    kubectl label nodes "$node" longhornnode=true --overwrite
+    # Remove the old incorrect label if it exists
+    kubectl label nodes "$node" longhornnode- --ignore-not-found
+
+    # Apply the correct longhorn-node label
+    kubectl label nodes "$node" longhorn-node=true --overwrite
     
-    # Create the JSON string and encode it to base64
-    json_config="[{\"path\":\"$device\",\"allowScheduling\":true}]"
-    encoded_config=$(echo -n "$json_config" | base64 | tr -d '\n')
+    # Apply the create-default-disk label
+    kubectl label nodes "$node" node.longhorn.io/create-default-disk=true --overwrite
     
-    # Apply the default-disks-config label
+    # Apply the specific disk config label
     kubectl label nodes "$node" \
-        node.longhorn.io/default-disks-config="$encoded_config" \
+        node.longhorn.io/default-disk-$device=true \
         --overwrite
     
     echo "Labels applied to $node"
@@ -24,12 +26,12 @@ apply_labels() {
 }
 
 # Apply labels for each node
-apply_labels "k8s-rancher-05" "/dev/sdb"
-apply_labels "k8s-rancher-06" "/dev/sdb"
-apply_labels "k8s-rancher-08" "/dev/sda"
-apply_labels "k8s-rancher-09" "/dev/sda"
-apply_labels "k8s-rancher-10" "/dev/nvme1n1"
-apply_labels "k8s-rancher-11" "/dev/sdb"
-apply_labels "k8s-rancher-12" "/dev/sdb"
+apply_labels "k8s-rancher-05" "sdb"
+apply_labels "k8s-rancher-06" "sdb"
+apply_labels "k8s-rancher-08" "sda"
+apply_labels "k8s-rancher-09" "sda"
+apply_labels "k8s-rancher-10" "nvme1n1"
+apply_labels "k8s-rancher-11" "sdb"
+apply_labels "k8s-rancher-12" "sdb"
 
 echo "All nodes have been labeled for Longhorn."

@@ -1,0 +1,36 @@
+Summary of disk information:
+Host: node10
+Total devices: 12
+OS device: /dev/mapper/ubuntu--vg-ubuntu--lv
+Devices: loop0, loop1, loop2, loop3, loop4, loop5, nvme1n1, nvme0n1, ├─nvme0n1p1, ├─nvme0n1p2, └─nvme0n1p3, └─ubuntu--vg-ubuntu--lv
+
+Host: node11
+Total devices: 14
+OS device: /dev/mapper/ubuntu--vg-ubuntu--lv
+Devices: loop0, loop1, loop2, loop3, loop4, loop5, sda, ├─sda1, ├─sda2, └─sda3, └─ubuntu--vg-ubuntu--lv, sdb, ├─sdb1, └─sdb2
+
+Host: node12
+Total devices: 10
+OS device: /dev/mapper/ubuntu--vg-ubuntu--lv
+Devices: loop0, loop1, loop2, sda, ├─sda1, ├─sda2, └─sda3, └─ubuntu--vg-ubuntu--lv, sdb, └─sdb1
+
+Host: node5
+Total devices: 14
+OS device: /dev/mapper/ubuntu--vg-ubuntu--lv
+Devices: loop0, loop1, loop3, loop4, loop5, loop6, sda, ├─sda1, ├─sda2, └─sda3, └─ubuntu--vg-ubuntu--lv, sdb, ├─sdb1, └─sdb2
+
+Host: node6
+Total devices: 14
+OS device: /dev/mapper/ubuntu--vg-ubuntu--lv
+Devices: loop0, loop1, loop3, loop4, loop5, loop6, sda, ├─sda1, ├─sda2, └─sda3, └─ubuntu--vg-ubuntu--lv, sdb, ├─sdb1, └─sdb2
+
+Host: node8
+Total devices: 14
+OS device: /dev/mapper/ubuntu--vg-ubuntu--lv
+Devices: loop0, loop1, loop3, loop4, loop5, loop6, sda, ├─sda1, └─sda2, sdb, ├─sdb1, ├─sdb2, └─sdb3, └─ubuntu--vg-ubuntu--lv
+
+Host: node9
+Total devices: 14
+OS device: /dev/mapper/ubuntu--vg-ubuntu--lv
+Devices: loop0, loop2, loop3, loop4, loop5, loop6, sda, ├─sda1, └─sda2, nvme0n1, ├─nvme0n1p1, ├─nvme0n1p2, └─nvme0n1p3, └─ubuntu--vg-ubuntu--lv
+

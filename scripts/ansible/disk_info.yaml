@@ -40,16 +40,10 @@
           disk_details: "{{ disk_info }}"
 
     - name: Write disk information to file on remote host
-      copy:
-        content: "{{ output_info | to_nice_json }}"
+      template:
+        src: disk_info.json.j2
         dest: "{{ remote_output_file }}"
-
-    - name: Ensure local output directory exists
-      file:
-        path: "{{ local_output_dir }}"
-        state: directory
-      delegate_to: localhost
-      become: no
+      become: yes
 
     - name: Fetch disk information file from remote host
       fetch:
@@ -62,9 +56,11 @@
       file:
         path: "{{ remote_output_file }}"
         state: absent
+      become: yes
 
 - name: Collect all disk information files
   hosts: localhost
+  connection: local
   gather_facts: no
   
   vars:
@@ -72,6 +68,11 @@
     local_output_dir: "./disk_info_output"
 
   tasks:
+    - name: Ensure local output directory exists
+      file:
+        path: "{{ local_output_dir }}"
+        state: directory
+
     - name: Find all disk info files
       find:
         paths: "{{ local_output_dir }}"

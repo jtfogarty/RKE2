@@ -1,56 +1,223 @@
-ansible all -i hosts.ini -m command -a "lsblk" -b
-node5 | CHANGED | rc=0 >>
-NAME                      MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
-loop0                       7:0    0  63.9M  1 loop /snap/core20/2105
-loop1                       7:1    0  63.9M  1 loop /snap/core20/2318
-loop3                       7:3    0    87M  1 loop /snap/lxd/28373
-loop4                       7:4    0  40.4M  1 loop /snap/snapd/20671
-loop5                       7:5    0  38.8M  1 loop /snap/snapd/21759
-loop6                       7:6    0    87M  1 loop /snap/lxd/29351
-sda                         8:0    0 465.8G  0 disk 
-├─sda1                      8:1    0     1G  0 part /boot/efi
-├─sda2                      8:2    0     2G  0 part /boot
-└─sda3                      8:3    0 462.7G  0 part 
-  └─ubuntu--vg-ubuntu--lv 253:0    0   100G  0 lvm  /var/lib/kubelet/pods/fe0abbf4-4d04-4bf9-9bbd-e74381d03dbc/volume-subpaths/fahconfig/fah/1
-                                                    /var/lib/kubelet/pods/2b20f8a6-49a3-4cce-8466-7097fa75bc64/volume-subpaths/sc-dashboard-provider/grafana/3
-                                                    /var/lib/kubelet/pods/2b20f8a6-49a3-4cce-8466-7097fa75bc64/volume-subpaths/config/grafana/0
-                                                    /
-sdb                         8:16   0   1.8T  0 disk 
-├─sdb1                      8:17   0   1.1T  0 part 
-└─sdb2                      8:18   0 745.2G  0 part 
-node8 | CHANGED | rc=0 >>
-NAME                      MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
-loop0                       7:0    0  63.9M  1 loop /snap/core20/2318
-loop1                       7:1    0  63.9M  1 loop /snap/core20/2105
-loop3                       7:3    0    87M  1 loop /snap/lxd/28373
-loop4                       7:4    0  40.4M  1 loop /snap/snapd/20671
-loop5                       7:5    0  38.8M  1 loop /snap/snapd/21759
-loop6                       7:6    0    87M  1 loop /snap/lxd/29351
-sda                         8:0    0 931.5G  0 disk 
-├─sda1                      8:1    0 558.9G  0 part 
-└─sda2                      8:2    0 372.6G  0 part 
-sdb                         8:16   0 232.9G  0 disk 
-├─sdb1                      8:17   0     1G  0 part /boot/efi
-├─sdb2                      8:18   0     2G  0 part /boot
-└─sdb3                      8:19   0 229.8G  0 part 
-  └─ubuntu--vg-ubuntu--lv 253:0    0   100G  0 lvm  /
-node6 | CHANGED | rc=0 >>
-NAME                      MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
-loop0                       7:0    0  63.9M  1 loop /snap/core20/2318
-loop1                       7:1    0  63.9M  1 loop /snap/core20/2105
-loop3                       7:3    0    87M  1 loop /snap/lxd/28373
-loop4                       7:4    0  40.4M  1 loop /snap/snapd/20671
-loop5                       7:5    0  38.8M  1 loop /snap/snapd/21759
-loop6                       7:6    0    87M  1 loop /snap/lxd/29351
-sda                         8:0    0 465.8G  0 disk 
-├─sda1                      8:1    0     1G  0 part /boot/efi
-├─sda2                      8:2    0     2G  0 part /boot
-└─sda3                      8:3    0 462.7G  0 part 
-  └─ubuntu--vg-ubuntu--lv 253:0    0   100G  0 lvm  /var/lib/kubelet/pods/6849fc1d-0203-4ff4-8dd1-612a524fa71c/volume-subpaths/fahconfig/fah/1
-                                                    /
-sdb                         8:16   0   1.8T  0 disk 
-├─sdb1                      8:17   0   1.1T  0 part 
-└─sdb2                      8:18   0 745.2G  0 part 
+ansible-playbook -i hosts.ini longhorn_disks.yaml 
+
+PLAY [Prepare disks for Longhorn] *********************************************************************************************************************************************
+
+TASK [Gathering Facts] ********************************************************************************************************************************************************
+ok: [node8]
+ok: [node9]
+ok: [node10]
+ok: [node6]
+ok: [node5]
+ok: [node12]
+ok: [node11]
+
+TASK [Set device variable for this host] **************************************************************************************************************************************
+ok: [node5]
+ok: [node6]
+ok: [node8]
+ok: [node9]
+ok: [node10]
+ok: [node11]
+ok: [node12]
+
+TASK [Unmount /dev/sdb if mounted] ********************************************************************************************************************************************
+ok: [node10] => (item=/data)
+ok: [node9] => (item=/data)
+ok: [node8] => (item=/data)
+ok: [node5] => (item=/data)
+ok: [node6] => (item=/data)
+ok: [node10] => (item=/dev/nvme1n11)
+ok: [node6] => (item=/dev/sdb1)
+ok: [node8] => (item=/dev/sda1)
+ok: [node9] => (item=/dev/sda1)
+ok: [node5] => (item=/dev/sdb1)
+ok: [node10] => (item=/dev/nvme1n12)
+ok: [node6] => (item=/dev/sdb2)
+ok: [node9] => (item=/dev/sda2)
+ok: [node8] => (item=/dev/sda2)
+ok: [node5] => (item=/dev/sdb2)
+failed: [node12] (item=/data) => {"ansible_loop_var": "item", "changed": false, "item": "/data", "msg": "Error unmounting /data: umount: /data: target is busy.\n"}
+ok: [node11] => (item=/data)
+ok: [node12] => (item=/dev/sdb1)
+ok: [node11] => (item=/dev/sdb1)
+ok: [node12] => (item=/dev/sdb2)
+...ignoring
+ok: [node11] => (item=/dev/sdb2)
+
+TASK [Remove /dev/sdb from /etc/fstab] ****************************************************************************************************************************************
+ok: [node10]
+ok: [node6]
+ok: [node8]
+ok: [node9]
+ok: [node5]
+changed: [node12]
+ok: [node11]
+
+TASK [Clear partition table on /dev/sdb] **************************************************************************************************************************************
+changed: [node10]
+changed: [node8]
+changed: [node9]
+fatal: [node12]: FAILED! => {"changed": true, "cmd": ["wipefs", "-a", "/dev/sdb"], "delta": "0:00:00.062656", "end": "2024-08-08 18:00:06.663970", "msg": "non-zero return code", "rc": 1, "start": "2024-08-08 18:00:06.601314", "stderr": "wipefs: error: /dev/sdb: probing initialization failed: Device or resource busy", "stderr_lines": ["wipefs: error: /dev/sdb: probing initialization failed: Device or resource busy"], "stdout": "", "stdout_lines": []}
+changed: [node5]
+changed: [node6]
+changed: [node11]
+
+TASK [Remove all partitions from /dev/sdb] ************************************************************************************************************************************
+ok: [node10] => (item=1)
+ok: [node9] => (item=1)
+ok: [node8] => (item=1)
+ok: [node6] => (item=1)
+ok: [node5] => (item=1)
+ok: [node10] => (item=2)
+ok: [node9] => (item=2)
+ok: [node6] => (item=2)
+ok: [node8] => (item=2)
+ok: [node5] => (item=2)
+ok: [node10] => (item=3)
+ok: [node9] => (item=3)
+ok: [node6] => (item=3)
+ok: [node8] => (item=3)
+ok: [node5] => (item=3)
+ok: [node11] => (item=1)
+ok: [node11] => (item=2)
+ok: [node11] => (item=3)
+
+TASK [Inform the OS of partition table changes] *******************************************************************************************************************************
+changed: [node10]
+changed: [node9]
+changed: [node8]
+changed: [node6]
+changed: [node5]
+changed: [node11]
+
+TASK [Clear filesystem signatures] ********************************************************************************************************************************************
+changed: [node10]
+changed: [node6]
+changed: [node5]
+changed: [node9]
+changed: [node8]
+changed: [node11]
+
+TASK [Verify disk is clean] ***************************************************************************************************************************************************
+changed: [node5]
+changed: [node10]
+changed: [node6]
+changed: [node8]
+changed: [node9]
+changed: [node11]
+
+TASK [Display disk status] ****************************************************************************************************************************************************
+ok: [node5] => {
+    "lsblk_output.stdout_lines": [
+        "NAME MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS",
+        "sdb    8:16   0  1.8T  0 disk "
+    ]
+}
+ok: [node6] => {
+    "lsblk_output.stdout_lines": [
+        "NAME MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS",
+        "sdb    8:16   0  1.8T  0 disk "
+    ]
+}
+ok: [node8] => {
+    "lsblk_output.stdout_lines": [
+        "NAME MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS",
+        "sda    8:0    0 931.5G  0 disk "
+    ]
+}
+ok: [node9] => {
+    "lsblk_output.stdout_lines": [
+        "NAME MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS",
+        "sda    8:0    0 931.5G  0 disk "
+    ]
+}
+ok: [node10] => {
+    "lsblk_output.stdout_lines": [
+        "NAME    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS",
+        "nvme1n1 259:0    0  1.9T  0 disk "
+    ]
+}
+ok: [node11] => {
+    "lsblk_output.stdout_lines": [
+        "NAME MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS",
+        "sdb    8:16   0  1.8T  0 disk "
+    ]
+}
+
+TASK [Ensure Longhorn data directory exists] **********************************************************************************************************************************
+changed: [node10]
+changed: [node6]
+changed: [node9]
+changed: [node8]
+changed: [node5]
+changed: [node11]
+
+TASK [Add Longhorn disk to config] ********************************************************************************************************************************************
+changed: [node10]
+changed: [node8]
+changed: [node6]
+changed: [node9]
+changed: [node5]
+changed: [node11]
+
+TASK [Set permissions for Longhorn config file] *******************************************************************************************************************************
+ok: [node10]
+ok: [node5]
+ok: [node8]
+ok: [node6]
+ok: [node9]
+ok: [node11]
+
+TASK [Display Longhorn disk config] *******************************************************************************************************************************************
+changed: [node10]
+changed: [node6]
+changed: [node8]
+changed: [node9]
+changed: [node5]
+changed: [node11]
+
+TASK [Show Longhorn disk config] **********************************************************************************************************************************************
+ok: [node5] => {
+    "longhorn_cfg.stdout_lines": [
+        "/dev/sdb"
+    ]
+}
+ok: [node6] => {
+    "longhorn_cfg.stdout_lines": [
+        "/dev/sdb"
+    ]
+}
+ok: [node8] => {
+    "longhorn_cfg.stdout_lines": [
+        "/dev/sda"
+    ]
+}
+ok: [node9] => {
+    "longhorn_cfg.stdout_lines": [
+        "/dev/sda"
+    ]
+}
+ok: [node10] => {
+    "longhorn_cfg.stdout_lines": [
+        "/dev/nvme1n1"
+    ]
+}
+ok: [node11] => {
+    "longhorn_cfg.stdout_lines": [
+        "/dev/sdb"
+    ]
+}
+
+PLAY RECAP ********************************************************************************************************************************************************************
+node10                     : ok=15   changed=7    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+node11                     : ok=15   changed=7    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+node12                     : ok=4    changed=1    unreachable=0    failed=1    skipped=0    rescued=0    ignored=1   
+node5                      : ok=15   changed=7    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+node6                      : ok=15   changed=7    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+node8                      : ok=15   changed=7    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+node9                      : ok=15   changed=7    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+Jeffs-iMac-3:ansible jeff-imac$ ansible all -i hosts.ini -m command -a "lsblk" -b
 node10 | CHANGED | rc=0 >>
 NAME                      MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
 loop0                       7:0    0  63.9M  1 loop /snap/core20/2105
@@ -77,13 +244,57 @@ loop4                       7:4    0  38.8M  1 loop /snap/snapd/21759
 loop5                       7:5    0    87M  1 loop /snap/lxd/28373
 loop6                       7:6    0    87M  1 loop /snap/lxd/29351
 sda                         8:0    0 931.5G  0 disk 
-├─sda1                      8:1    0 558.9G  0 part 
-└─sda2                      8:2    0 372.6G  0 part 
 nvme0n1                   259:0    0 111.8G  0 disk 
 ├─nvme0n1p1               259:1    0     1G  0 part /boot/efi
 ├─nvme0n1p2               259:2    0     2G  0 part /boot
 └─nvme0n1p3               259:3    0 108.7G  0 part 
   └─ubuntu--vg-ubuntu--lv 253:0    0  54.4G  0 lvm  /
+node8 | CHANGED | rc=0 >>
+NAME                      MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+loop0                       7:0    0  63.9M  1 loop /snap/core20/2318
+loop1                       7:1    0  63.9M  1 loop /snap/core20/2105
+loop3                       7:3    0    87M  1 loop /snap/lxd/28373
+loop4                       7:4    0  40.4M  1 loop /snap/snapd/20671
+loop5                       7:5    0  38.8M  1 loop /snap/snapd/21759
+loop6                       7:6    0    87M  1 loop /snap/lxd/29351
+sda                         8:0    0 931.5G  0 disk 
+sdb                         8:16   0 232.9G  0 disk 
+├─sdb1                      8:17   0     1G  0 part /boot/efi
+├─sdb2                      8:18   0     2G  0 part /boot
+└─sdb3                      8:19   0 229.8G  0 part 
+  └─ubuntu--vg-ubuntu--lv 253:0    0   100G  0 lvm  /
+node6 | CHANGED | rc=0 >>
+NAME                      MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+loop0                       7:0    0  63.9M  1 loop /snap/core20/2318
+loop1                       7:1    0  63.9M  1 loop /snap/core20/2105
+loop3                       7:3    0    87M  1 loop /snap/lxd/28373
+loop4                       7:4    0  40.4M  1 loop /snap/snapd/20671
+loop5                       7:5    0  38.8M  1 loop /snap/snapd/21759
+loop6                       7:6    0    87M  1 loop /snap/lxd/29351
+sda                         8:0    0 465.8G  0 disk 
+├─sda1                      8:1    0     1G  0 part /boot/efi
+├─sda2                      8:2    0     2G  0 part /boot
+└─sda3                      8:3    0 462.7G  0 part 
+  └─ubuntu--vg-ubuntu--lv 253:0    0   100G  0 lvm  /var/lib/kubelet/pods/6849fc1d-0203-4ff4-8dd1-612a524fa71c/volume-subpaths/fahconfig/fah/1
+                                                    /
+sdb                         8:16   0   1.8T  0 disk 
+node5 | CHANGED | rc=0 >>
+NAME                      MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+loop0                       7:0    0  63.9M  1 loop /snap/core20/2105
+loop1                       7:1    0  63.9M  1 loop /snap/core20/2318
+loop3                       7:3    0    87M  1 loop /snap/lxd/28373
+loop4                       7:4    0  40.4M  1 loop /snap/snapd/20671
+loop5                       7:5    0  38.8M  1 loop /snap/snapd/21759
+loop6                       7:6    0    87M  1 loop /snap/lxd/29351
+sda                         8:0    0 465.8G  0 disk 
+├─sda1                      8:1    0     1G  0 part /boot/efi
+├─sda2                      8:2    0     2G  0 part /boot
+└─sda3                      8:3    0 462.7G  0 part 
+  └─ubuntu--vg-ubuntu--lv 253:0    0   100G  0 lvm  /var/lib/kubelet/pods/fe0abbf4-4d04-4bf9-9bbd-e74381d03dbc/volume-subpaths/fahconfig/fah/1
+                                                    /var/lib/kubelet/pods/2b20f8a6-49a3-4cce-8466-7097fa75bc64/volume-subpaths/sc-dashboard-provider/grafana/3
+                                                    /var/lib/kubelet/pods/2b20f8a6-49a3-4cce-8466-7097fa75bc64/volume-subpaths/config/grafana/0
+                                                    /
+sdb                         8:16   0   1.8T  0 disk 
 node12 | CHANGED | rc=0 >>
 NAME                      MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
 loop0                       7:0    0  63.9M  1 loop /snap/core20/2105
@@ -111,5 +322,3 @@ sda                         8:0    0 465.8G  0 disk
   └─ubuntu--vg-ubuntu--lv 253:0    0   100G  0 lvm  /var/lib/kubelet/pods/60703afe-9adc-4d08-b28d-8cda79b115ab/volume-subpaths/fahconfig/fah/1
                                                     /
 sdb                         8:16   0   1.8T  0 disk 
-├─sdb1                      8:17   0   1.1T  0 part 
-└─sdb2                      8:18   0 745.2G  0 part 

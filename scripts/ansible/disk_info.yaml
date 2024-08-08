@@ -43,25 +43,23 @@
       template:
         src: disk_info.json.j2
         dest: "{{ remote_output_file }}"
-      become: yes
 
     - name: Fetch disk information file from remote host
       fetch:
         src: "{{ remote_output_file }}"
         dest: "{{ local_output_dir }}/{{ inventory_hostname }}_disk_info.json"
         flat: yes
-      become: no
 
     - name: Remove temporary file from remote host
       file:
         path: "{{ remote_output_file }}"
         state: absent
-      become: yes
 
 - name: Collect all disk information files
   hosts: localhost
   connection: local
   gather_facts: no
+  become: no
   
   vars:
     collected_file: "disk_info_all_hosts.json"
@@ -72,6 +70,7 @@
       file:
         path: "{{ local_output_dir }}"
         state: directory
+      delegate_to: localhost
 
     - name: Find all disk info files
       find:

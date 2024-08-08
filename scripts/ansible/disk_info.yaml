@@ -1,8 +1,11 @@
 ---
-- name: Gather disk information
+- name: Gather disk information and save to file
   hosts: all
   become: yes
   gather_facts: yes
+
+  vars:
+    output_file: "/tmp/disk_info_{{ inventory_hostname }}.json"
 
   tasks:
     - name: Get list of all block devices with filesystem info
@@ -20,26 +23,61 @@
       register: lvm_info
       changed_when: false
 
-    - name: Parse and display disk information
-      ansible.builtin.set_fact:
+    - name: Parse disk information
+      set_fact:
         disk_info: "{{ disk_info | default([]) + [{'name': item.split()[0], 'size': item.split()[1], 'type': item.split()[2], 'fstype': item.split()[3] if item.split() | length > 3 else 'N/A', 'mountpoint': item.split()[4] if item.split() | length > 4 else 'N/A'}] }}"
       loop: "{{ block_devices.stdout_lines }}"
 
-    - name: Display disk information
-      ansible.builtin.debug:
-        msg: 
-          - "Device: {{ item.name }}"
-          - "Size: {{ item.size }}"
-          - "Type: {{ item.type }}"
-          - "Filesystem: {{ item.fstype }}"
-          - "Mountpoint: {{ item.mountpoint }}"
-          - "OS Device: {{ 'Yes' if item.name in root_fs.stdout else 'No' }}"
-          - "LVM: {{ 'Yes' if item.name in lvm_info.stdout else 'No' }}"
-      loop: "{{ disk_info }}"
+    - name: Prepare disk information for output
+      set_fact:
+        output_info:
+          hostname: "{{ inventory_hostname }}"
+          total_devices: "{{ disk_info | length }}"
+          os_device: "{{ root_fs.stdout }}"
+          lvm_devices: "{{ lvm_info.stdout_lines | map('regex_replace', '^\\s*(.*)\\s+.*$', '\\1') | list }}"
+          devices: "{{ disk_info | map(attribute='name') | list }}"
+          disk_details: "{{ disk_info }}"
 
-    - name: Summary
-      ansible.builtin.debug:
-        msg:
-          - "Total devices: {{ disk_info | length }}"
-          - "OS Device: {{ root_fs.stdout }}"
-          - "Devices used in LVM: {{ lvm_info.stdout_lines | map('regex_replace', '^\\s*(.*)\\s+.*$', '\\1') | list | join(', ') }}"
+    - name: Write disk information to file
+      copy:
+        content: "{{ output_info | to_nice_json }}"
+        dest: "{{ output_file }}"
+      delegate_to: localhost
+
+    - name: Notify about file creation
+      debug:
+        msg: "Disk information for {{ inventory_hostname }} has been saved to {{ output_file }}"
+
+- name: Collect all disk information files
+  hosts: localhost
+  gather_facts: no
+  
+  vars:
+    collected_file: "disk_info_all_hosts.json"
+
+  tasks:
+    - name: Find all disk info files
+      find:
+        paths: /tmp
+        patterns: "disk_info_*.json"
+      register: found_files
+
+    - name: Read disk info files
+      slurp:
+        src: "{{ item.path }}"
+      register: file_contents
+      loop: "{{ found_files.files }}"
+
+    - name: Combine all disk info
+      set_fact:
+        all_disk_info: "{{ all_disk_info | default([]) + [item.content | b64decode | from_json] }}"
+      loop: "{{ file_contents.results }}"
+
+    - name: Write combined disk information to file
+      copy:
+        content: "{{ all_disk_info | to_nice_json }}"
+        dest: "/tmp/{{ collected_file }}"
+
+    - name: Notify about combined file creation
+      debug:
+        msg: "Combined disk information for all hosts has been saved to /tmp/{{ collected_file }}"

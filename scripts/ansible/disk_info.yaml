@@ -1,7 +1,7 @@
 ---
 - name: Gather disk information and save to file
   hosts: all
-  become: yes
+  become: true
   gather_facts: yes
 
   vars:
@@ -39,6 +39,7 @@
           disk_details: "{{ disk_info }}"
 
     - name: Write disk information to file
+      become: true
       copy:
         content: "{{ output_info | to_nice_json }}"
         dest: "{{ output_file }}"

@@ -1,0 +1,44 @@
+---
+- name: Gather disk information
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  tasks:
+    - name: Get list of all block devices
+      command: lsblk -ndo NAME,SIZE,TYPE,MOUNTPOINT
+      register: block_devices
+      changed_when: false
+
+    - name: Get filesystem information
+      command: df -hT
+      register: filesystem_info
+      changed_when: false
+
+    - name: Get disk with OS
+      command: df -h /
+      register: os_disk
+      changed_when: false
+
+    - name: Parse and display disk information
+      ansible.builtin.set_fact:
+        disk_info: "{{ disk_info | default([]) + [{'name': item.split()[0], 'size': item.split()[1], 'type': item.split()[2], 'mountpoint': item.split()[3] if item.split() | length > 3 else 'N/A'}] }}"
+      loop: "{{ block_devices.stdout_lines }}"
+      when: item.split()[2] == 'disk'
+
+    - name: Display disk information
+      ansible.builtin.debug:
+        msg: 
+          - "Disk: {{ item.name }}"
+          - "Size: {{ item.size }}"
+          - "Mountpoint: {{ item.mountpoint }}"
+          - "OS Disk: {{ 'Yes' if item.name in os_disk.stdout else 'No' }}"
+          - "Filesystem: {{ filesystem_info.stdout | regex_search('(?m)^' + item.name + '\\S*\\s+(\\S+).*') | default('No filesystem') }}"
+      loop: "{{ disk_info }}"
+
+    - name: Summary
+      ansible.builtin.debug:
+        msg:
+          - "Total disks: {{ disk_info | length }}"
+          - "OS Disk: {{ os_disk.stdout.split()[0] }}"
+          - "OS Disk Size: {{ os_disk.stdout.split()[1] }}"

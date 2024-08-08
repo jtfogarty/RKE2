@@ -1,11 +1,12 @@
 ---
 - name: Gather disk information and save to file
   hosts: all
-  become: true
+  become: yes
   gather_facts: yes
 
   vars:
-    output_file: "/tmp/disk_info_{{ inventory_hostname }}.json"
+    remote_output_file: "/tmp/disk_info_{{ inventory_hostname }}.json"
+    local_output_dir: "./disk_info_output"
 
   tasks:
     - name: Get list of all block devices with filesystem info
@@ -38,16 +39,29 @@
           devices: "{{ disk_info | map(attribute='name') | list }}"
           disk_details: "{{ disk_info }}"
 
-    - name: Write disk information to file
-      become: true
+    - name: Write disk information to file on remote host
       copy:
         content: "{{ output_info | to_nice_json }}"
-        dest: "{{ output_file }}"
-      delegate_to: localhost
+        dest: "{{ remote_output_file }}"
 
-    - name: Notify about file creation
-      debug:
-        msg: "Disk information for {{ inventory_hostname }} has been saved to {{ output_file }}"
+    - name: Ensure local output directory exists
+      file:
+        path: "{{ local_output_dir }}"
+        state: directory
+      delegate_to: localhost
+      become: no
+
+    - name: Fetch disk information file from remote host
+      fetch:
+        src: "{{ remote_output_file }}"
+        dest: "{{ local_output_dir }}/{{ inventory_hostname }}_disk_info.json"
+        flat: yes
+      become: no
+
+    - name: Remove temporary file from remote host
+      file:
+        path: "{{ remote_output_file }}"
+        state: absent
 
 - name: Collect all disk information files
   hosts: localhost
@@ -55,12 +69,13 @@
   
   vars:
     collected_file: "disk_info_all_hosts.json"
+    local_output_dir: "./disk_info_output"
 
   tasks:
     - name: Find all disk info files
       find:
-        paths: /tmp
-        patterns: "disk_info_*.json"
+        paths: "{{ local_output_dir }}"
+        patterns: "*_disk_info.json"
       register: found_files
 
     - name: Read disk info files
@@ -77,8 +92,8 @@
     - name: Write combined disk information to file
       copy:
         content: "{{ all_disk_info | to_nice_json }}"
-        dest: "/tmp/{{ collected_file }}"
+        dest: "{{ local_output_dir }}/{{ collected_file }}"
 
     - name: Notify about combined file creation
       debug:
-        msg: "Combined disk information for all hosts has been saved to /tmp/{{ collected_file }}"
+        msg: "Combined disk information for all hosts has been saved to {{ local_output_dir }}/{{ collected_file }}"

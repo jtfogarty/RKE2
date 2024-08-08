@@ -1,19 +1,9 @@
 #!/bin/bash
 
-# Array of node configurations
-declare -A node_configs=(
-    ["k8s-rancher-05"]="/dev/sdb"
-    ["k8s-rancher-06"]="/dev/sdb"
-    ["k8s-rancher-08"]="/dev/sda"
-    ["k8s-rancher-09"]="/dev/sda"
-    ["k8s-rancher-10"]="/dev/nvme1n1"
-    ["k8s-rancher-11"]="/dev/sdb"
-    ["k8s-rancher-12"]="/dev/sdb"
-)
-
-# Loop through the node configurations and apply labels
-for node in "${!node_configs[@]}"; do
-    device="${node_configs[$node]}"
+# Function to apply labels to a node
+apply_labels() {
+    local node=$1
+    local device=$2
     
     echo "Labeling node $node with device $device"
     
@@ -27,6 +17,15 @@ for node in "${!node_configs[@]}"; do
     
     echo "Labels applied to $node"
     echo "-------------------"
-done
+}
+
+# Apply labels for each node
+apply_labels "k8s-rancher-05" "/dev/sdb"
+apply_labels "k8s-rancher-06" "/dev/sdb"
+apply_labels "k8s-rancher-08" "/dev/sda"
+apply_labels "k8s-rancher-09" "/dev/sda"
+apply_labels "k8s-rancher-10" "/dev/nvme1n1"
+apply_labels "k8s-rancher-11" "/dev/sdb"
+apply_labels "k8s-rancher-12" "/dev/sdb"
 
 echo "All nodes have been labeled for Longhorn."

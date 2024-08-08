@@ -1,8 +1,8 @@
-TASK [Write disk information to file] ************************************************************************************************
-fatal: [node6 -> localhost]: FAILED! => {"msg": "Failed to get information on remote file (/tmp/disk_info_node6.json): sudo: a password is required\n"}
-fatal: [node9 -> localhost]: FAILED! => {"msg": "Failed to get information on remote file (/tmp/disk_info_node9.json): sudo: a password is required\n"}
-fatal: [node8 -> localhost]: FAILED! => {"msg": "Failed to get information on remote file (/tmp/disk_info_node8.json): sudo: a password is required\n"}
-fatal: [node10 -> localhost]: FAILED! => {"msg": "Failed to get information on remote file (/tmp/disk_info_node10.json): sudo: a password is required\n"}
-fatal: [node5 -> localhost]: FAILED! => {"msg": "Failed to get information on remote file (/tmp/disk_info_node5.json): sudo: a password is required\n"}
-fatal: [node11 -> localhost]: FAILED! => {"msg": "Failed to get information on remote file (/tmp/disk_info_node11.json): sudo: a password is required\n"}
-fatal: [node12 -> localhost]: FAILED! => {"msg": "Failed to get information on remote file (/tmp/disk_info_node12.json): sudo: a password is required\n"}
+TASK [Ensure local output directory exists] ******************************************************************************************
+fatal: [node10 -> localhost]: FAILED! => {"changed": false, "module_stderr": "sudo: a password is required\n", "module_stdout": "", "msg": "MODULE FAILURE\nSee stdout/stderr for the exact error", "rc": 1}
+fatal: [node8 -> localhost]: FAILED! => {"changed": false, "module_stderr": "sudo: a password is required\n", "module_stdout": "", "msg": "MODULE FAILURE\nSee stdout/stderr for the exact error", "rc": 1}
+fatal: [node9 -> localhost]: FAILED! => {"changed": false, "module_stderr": "sudo: a password is required\n", "module_stdout": "", "msg": "MODULE FAILURE\nSee stdout/stderr for the exact error", "rc": 1}
+fatal: [node6 -> localhost]: FAILED! => {"changed": false, "module_stderr": "sudo: a password is required\n", "module_stdout": "", "msg": "MODULE FAILURE\nSee stdout/stderr for the exact error", "rc": 1}
+fatal: [node5 -> localhost]: FAILED! => {"changed": false, "module_stderr": "sudo: a password is required\n", "module_stdout": "", "msg": "MODULE FAILURE\nSee stdout/stderr for the exact error", "rc": 1}
+fatal: [node11 -> localhost]: FAILED! => {"changed": false, "module_stderr": "sudo: a password is required\n", "module_stdout": "", "msg": "MODULE FAILURE\nSee stdout/stderr for the exact error", "rc": 1}
+fatal: [node12 -> localhost]: FAILED! => {"changed": false, "module_stderr": "sudo: a password is required\n", "module_stdout": "", "msg": "MODULE FAILURE\nSee stdout/stderr for the exact error", "rc": 1}

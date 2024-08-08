@@ -1,0 +1,233 @@
+TASK [Parse and display disk information] ***************************************************************************************
+skipping: [node5] => (item=loop0  63.9M loop /snap/core20/2105) 
+skipping: [node5] => (item=loop1  63.9M loop /snap/core20/2318) 
+skipping: [node5] => (item=loop3    87M loop /snap/lxd/28373) 
+skipping: [node5] => (item=loop4  40.4M loop /snap/snapd/20671) 
+skipping: [node5] => (item=loop5  38.8M loop /snap/snapd/21759) 
+skipping: [node5] => (item=loop6    87M loop /snap/lxd/29351) 
+skipping: [node6] => (item=loop0  63.9M loop /snap/core20/2318) 
+skipping: [node6] => (item=loop1  63.9M loop /snap/core20/2105) 
+skipping: [node6] => (item=loop3    87M loop /snap/lxd/28373) 
+skipping: [node6] => (item=loop4  40.4M loop /snap/snapd/20671) 
+skipping: [node6] => (item=loop5  38.8M loop /snap/snapd/21759) 
+skipping: [node6] => (item=loop6    87M loop /snap/lxd/29351) 
+skipping: [node8] => (item=loop0  63.9M loop /snap/core20/2318) 
+skipping: [node8] => (item=loop1  63.9M loop /snap/core20/2105) 
+skipping: [node8] => (item=loop3    87M loop /snap/lxd/28373) 
+skipping: [node8] => (item=loop4  40.4M loop /snap/snapd/20671) 
+skipping: [node8] => (item=loop5  38.8M loop /snap/snapd/21759) 
+skipping: [node8] => (item=loop6    87M loop /snap/lxd/29351) 
+skipping: [node9] => (item=loop0    63.9M loop /snap/core20/2105) 
+skipping: [node9] => (item=loop2    63.9M loop /snap/core20/2318) 
+skipping: [node9] => (item=loop3    40.4M loop /snap/snapd/20671) 
+ok: [node5] => (item=sda   465.8G disk )
+skipping: [node9] => (item=loop4    38.8M loop /snap/snapd/21759) 
+ok: [node5] => (item=sdb     1.8T disk )
+skipping: [node9] => (item=loop5      87M loop /snap/lxd/28373) 
+skipping: [node9] => (item=loop6      87M loop /snap/lxd/29351) 
+skipping: [node10] => (item=loop0    63.9M loop /snap/core20/2105) 
+skipping: [node10] => (item=loop1    63.9M loop /snap/core20/2318) 
+skipping: [node10] => (item=loop2      87M loop /snap/lxd/27037) 
+skipping: [node10] => (item=loop3      87M loop /snap/lxd/29351) 
+skipping: [node10] => (item=loop4    40.4M loop /snap/snapd/20671) 
+skipping: [node10] => (item=loop5    38.8M loop /snap/snapd/21759) 
+ok: [node6] => (item=sda   465.8G disk )
+skipping: [node11] => (item=loop0  63.9M loop /snap/core20/2318) 
+skipping: [node11] => (item=loop1  63.9M loop /snap/core20/2105) 
+skipping: [node11] => (item=loop2    87M loop /snap/lxd/27037) 
+ok: [node6] => (item=sdb     1.8T disk )
+ok: [node8] => (item=sda   931.5G disk )
+skipping: [node11] => (item=loop3    87M loop /snap/lxd/29351) 
+skipping: [node11] => (item=loop4  40.4M loop /snap/snapd/20671) 
+skipping: [node11] => (item=loop5  38.8M loop /snap/snapd/21759) 
+ok: [node8] => (item=sdb   232.9G disk )
+skipping: [node12] => (item=loop0  63.9M loop /snap/core20/2105) 
+skipping: [node12] => (item=loop1    87M loop /snap/lxd/27037) 
+skipping: [node12] => (item=loop2  40.4M loop /snap/snapd/20671) 
+ok: [node11] => (item=sda   465.8G disk )
+ok: [node9] => (item=sda     931.5G disk )
+ok: [node11] => (item=sdb     1.8T disk )
+ok: [node9] => (item=nvme0n1 111.8G disk )
+ok: [node10] => (item=nvme1n1   1.9T disk )
+ok: [node12] => (item=sda   465.8G disk )
+ok: [node10] => (item=nvme0n1 931.5G disk )
+ok: [node12] => (item=sdb     1.8T disk )
+
+TASK [Display disk information] *************************************************************************************************
+ok: [node5] => (item={'name': 'sda', 'size': '465.8G', 'type': 'disk', 'mountpoint': 'N/A'}) => {
+    "msg": [
+        "Disk: sda",
+        "Size: 465.8G",
+        "Mountpoint: N/A",
+        "OS Disk: No",
+        "Filesystem: "
+    ]
+}
+ok: [node5] => (item={'name': 'sdb', 'size': '1.8T', 'type': 'disk', 'mountpoint': 'N/A'}) => {
+    "msg": [
+        "Disk: sdb",
+        "Size: 1.8T",
+        "Mountpoint: N/A",
+        "OS Disk: No",
+        "Filesystem: "
+    ]
+}
+ok: [node6] => (item={'name': 'sda', 'size': '465.8G', 'type': 'disk', 'mountpoint': 'N/A'}) => {
+    "msg": [
+        "Disk: sda",
+        "Size: 465.8G",
+        "Mountpoint: N/A",
+        "OS Disk: No",
+        "Filesystem: "
+    ]
+}
+ok: [node6] => (item={'name': 'sdb', 'size': '1.8T', 'type': 'disk', 'mountpoint': 'N/A'}) => {
+    "msg": [
+        "Disk: sdb",
+        "Size: 1.8T",
+        "Mountpoint: N/A",
+        "OS Disk: No",
+        "Filesystem: "
+    ]
+}
+ok: [node8] => (item={'name': 'sda', 'size': '931.5G', 'type': 'disk', 'mountpoint': 'N/A'}) => {
+    "msg": [
+        "Disk: sda",
+        "Size: 931.5G",
+        "Mountpoint: N/A",
+        "OS Disk: No",
+        "Filesystem: "
+    ]
+}
+ok: [node8] => (item={'name': 'sdb', 'size': '232.9G', 'type': 'disk', 'mountpoint': 'N/A'}) => {
+    "msg": [
+        "Disk: sdb",
+        "Size: 232.9G",
+        "Mountpoint: N/A",
+        "OS Disk: No",
+        "Filesystem: "
+    ]
+}
+ok: [node9] => (item={'name': 'sda', 'size': '931.5G', 'type': 'disk', 'mountpoint': 'N/A'}) => {
+    "msg": [
+        "Disk: sda",
+        "Size: 931.5G",
+        "Mountpoint: N/A",
+        "OS Disk: No",
+        "Filesystem: "
+    ]
+}
+ok: [node9] => (item={'name': 'nvme0n1', 'size': '111.8G', 'type': 'disk', 'mountpoint': 'N/A'}) => {
+    "msg": [
+        "Disk: nvme0n1",
+        "Size: 111.8G",
+        "Mountpoint: N/A",
+        "OS Disk: No",
+        "Filesystem: "
+    ]
+}
+ok: [node10] => (item={'name': 'nvme1n1', 'size': '1.9T', 'type': 'disk', 'mountpoint': 'N/A'}) => {
+    "msg": [
+        "Disk: nvme1n1",
+        "Size: 1.9T",
+        "Mountpoint: N/A",
+        "OS Disk: No",
+        "Filesystem: "
+    ]
+}
+ok: [node10] => (item={'name': 'nvme0n1', 'size': '931.5G', 'type': 'disk', 'mountpoint': 'N/A'}) => {
+    "msg": [
+        "Disk: nvme0n1",
+        "Size: 931.5G",
+        "Mountpoint: N/A",
+        "OS Disk: No",
+        "Filesystem: "
+    ]
+}
+ok: [node11] => (item={'name': 'sda', 'size': '465.8G', 'type': 'disk', 'mountpoint': 'N/A'}) => {
+    "msg": [
+        "Disk: sda",
+        "Size: 465.8G",
+        "Mountpoint: N/A",
+        "OS Disk: No",
+        "Filesystem: "
+    ]
+}
+ok: [node11] => (item={'name': 'sdb', 'size': '1.8T', 'type': 'disk', 'mountpoint': 'N/A'}) => {
+    "msg": [
+        "Disk: sdb",
+        "Size: 1.8T",
+        "Mountpoint: N/A",
+        "OS Disk: No",
+        "Filesystem: "
+    ]
+}
+ok: [node12] => (item={'name': 'sda', 'size': '465.8G', 'type': 'disk', 'mountpoint': 'N/A'}) => {
+    "msg": [
+        "Disk: sda",
+        "Size: 465.8G",
+        "Mountpoint: N/A",
+        "OS Disk: No",
+        "Filesystem: "
+    ]
+}
+ok: [node12] => (item={'name': 'sdb', 'size': '1.8T', 'type': 'disk', 'mountpoint': 'N/A'}) => {
+    "msg": [
+        "Disk: sdb",
+        "Size: 1.8T",
+        "Mountpoint: N/A",
+        "OS Disk: No",
+        "Filesystem: "
+    ]
+}
+
+TASK [Summary] ******************************************************************************************************************
+ok: [node5] => {
+    "msg": [
+        "Total disks: 2",
+        "OS Disk: Filesystem",
+        "OS Disk Size: Size"
+    ]
+}
+ok: [node6] => {
+    "msg": [
+        "Total disks: 2",
+        "OS Disk: Filesystem",
+        "OS Disk Size: Size"
+    ]
+}
+ok: [node8] => {
+    "msg": [
+        "Total disks: 2",
+        "OS Disk: Filesystem",
+        "OS Disk Size: Size"
+    ]
+}
+ok: [node9] => {
+    "msg": [
+        "Total disks: 2",
+        "OS Disk: Filesystem",
+        "OS Disk Size: Size"
+    ]
+}
+ok: [node10] => {
+    "msg": [
+        "Total disks: 2",
+        "OS Disk: Filesystem",
+        "OS Disk Size: Size"
+    ]
+}
+ok: [node11] => {
+    "msg": [
+        "Total disks: 2",
+        "OS Disk: Filesystem",
+        "OS Disk Size: Size"
+    ]
+}
+ok: [node12] => {
+    "msg": [
+        "Total disks: 2",
+        "OS Disk: Filesystem",
+        "OS Disk Size: Size"
+    ]
+}

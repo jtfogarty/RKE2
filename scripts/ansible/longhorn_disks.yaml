@@ -1,0 +1,77 @@
+---
+- name: Prepare disks for Longhorn
+  hosts: node5,node6,node11,node12
+  become: yes
+  vars:
+    device: /dev/sdb
+
+  tasks:
+    - name: Unmount {{ device }} if mounted
+      mount:
+        path: "{{ item }}"
+        src: "{{ device }}"
+        fstype: auto
+        state: unmounted
+      loop:
+        - /data
+        - "{{ device }}1"
+      ignore_errors: yes
+
+    - name: Remove {{ device }} from /etc/fstab
+      lineinfile:
+        path: /etc/fstab
+        regexp: "{{ device }}"
+        state: absent
+
+    - name: Clear partition table on {{ device }}
+      command: wipefs -a {{ device }}
+
+    - name: Remove all partitions from {{ device }}
+      parted:
+        device: "{{ device }}"
+        number: "{{ item }}"
+        state: absent
+      loop:
+        - 1
+        - 2
+      ignore_errors: yes
+
+    - name: Inform the OS of partition table changes
+      command: partprobe {{ device }}
+
+    - name: Clear filesystem signatures
+      command: wipefs -a {{ device }}
+
+    - name: Verify disk is clean
+      command: lsblk {{ device }}
+      register: lsblk_output
+
+    - name: Display disk status
+      debug:
+        var: lsblk_output.stdout_lines
+
+    - name: Ensure Longhorn data directory exists
+      file:
+        path: /var/lib/longhorn
+        state: directory
+        mode: '0755'
+
+    - name: Add Longhorn disk to config
+      lineinfile:
+        path: /var/lib/longhorn/longhorn-disk.cfg
+        line: "{{ device }}"
+        create: yes
+        state: present
+      
+    - name: Set permissions for Longhorn config file
+      file:
+        path: /var/lib/longhorn/longhorn-disk.cfg
+        mode: '0644'
+
+    - name: Display Longhorn disk config
+      command: cat /var/lib/longhorn/longhorn-disk.cfg
+      register: longhorn_cfg
+
+    - name: Show Longhorn disk config
+      debug:
+        var: longhorn_cfg.stdout_lines

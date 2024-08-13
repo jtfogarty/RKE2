@@ -2,7 +2,7 @@
 graph TD
     User[User\nhttp://ollama.documentresearch.dev:8080/api] -->|HTTP| PF
 
-    subgraph PF[------------------------------------pfSense------------------------------------\nVIP 10.10.100.7\n DNS ollama.documentresearch.dev]
+    subgraph PF[------------------------------------pfSense------------------------------------\nVIP:\n10.10.100.7\n DNS:\nollama.documentresearch.dev]
         subgraph HAProxy
         HAP[istio frontend\nistio backend]
         end

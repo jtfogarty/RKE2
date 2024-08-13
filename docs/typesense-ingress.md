@@ -8,7 +8,7 @@ graph TD
         end
     end
 
-    HAP -->|Port 8108| KC
+    HAP -->|Port 30354| KC
 
     subgraph KC[Kubernetes Cluster]
         IS1[Istio Ingress Gateway Node 1]

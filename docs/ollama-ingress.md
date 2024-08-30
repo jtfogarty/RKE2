@@ -14,12 +14,12 @@ graph TD
         IS1[Istio Ingress Gateway Node 1]
         IS2[Istio Ingress Gateway Node 2]
         IS3[Istio Ingress Gateway Node 3]
-        IG[Istio Gateway]
+        OG[Ollama Gateway port 80]
         VS[Virtual Service]
-        OL[Ollama Service]
+        OS[Ollama Service]
         
         IS1 & IS2 & IS3 -->|HTTP| IG
-        IG -->|HTTP| VS
-        VS -->|Port 11434| OL
+        OG -->|HTTP| VS
+        VS -->|Port 11434| OS
     end
 ```

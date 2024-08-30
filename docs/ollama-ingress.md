@@ -18,7 +18,7 @@ graph TD
         VS[Virtual Service]
         OS[Ollama Service]
         
-        IS1 & IS2 & IS3 -->|HTTP| IG
+        IS1 & IS2 & IS3 -->|HTTP| OG
         OG -->|HTTP| VS
         VS -->|Port 11434| OS
     end
